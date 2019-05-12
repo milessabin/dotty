@@ -13,3 +13,5 @@ reference
 typelevel0.scala
 matchtype.scala
 6322.scala
+hk-match-types.scala
+hk-match-types-tuples.scala
