@@ -9,6 +9,7 @@ typeclass-derivation2.scala
 typeclass-derivation2a.scala
 typeclass-derivation2c.scala
 typeclass-derivation3.scala
+typeclass-derivation4.scala
 derive-generic.scala
 mixin-forwarder-overload
 t8905

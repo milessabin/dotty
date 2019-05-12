@@ -195,6 +195,7 @@ class CompilationTests extends ParallelTesting {
       compileFile("tests/run-custom-args/tuple-cons.scala", allowDeepSubtypes),
       compileFile("tests/run-custom-args/i5256.scala", allowDeepSubtypes),
       compileFile("tests/run-custom-args/no-useless-forwarders.scala", defaultOptions and "-Xmixin-force-forwarders:false"),
+      compileFile("tests/run-custom-args/typeclass-derivation4.scala", defaultOptions without "-Ycheck:all"), // Currently has a -Ycheck:positions problem
       compileFilesInDir("tests/run", defaultOptions)
     ).checkRuns()
   }
