@@ -200,6 +200,13 @@ class CompilationTests extends ParallelTesting {
     ).checkRuns()
   }
 
+  // Type class derivation tests -----------------------------------------------
+
+  @Test def tcd: Unit = {
+    implicit val testGroup: TestGroup = TestGroup("tcd")
+    compileFilesInDir("tests/typeclass-derivation", defaultOptions without "-Ycheck:all") // Currently has a -Ycheck:positions problem
+  }.checkRuns()
+
   // Generic java signatures tests ---------------------------------------------
 
   @Test def genericJavaSignatures: Unit = {
