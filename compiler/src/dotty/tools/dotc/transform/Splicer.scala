@@ -124,8 +124,12 @@ object Splicer {
       }
 
       val name = getDirectName(fn.info.finalResultType, fn.name.asTermName)
-      val method = getMethod(clazz, name, paramsSig(fn))
-      stopIfRuntimeException(method.invoke(inst, args: _*))
+      if (name == nme.asInstanceOfPM)
+        interpretModuleAccess(moduleClass)
+      else {
+        val method = getMethod(clazz, name, paramsSig(fn))
+        stopIfRuntimeException(method.invoke(inst, args: _*))
+      }
     }
 
     protected def interpretModuleAccess(fn: Symbol)(implicit env: Env): Object =
