@@ -292,6 +292,8 @@ class KernelImpl(val rootContext: core.Contexts.Context, val rootPosition: util.
   def Select_unique(qualifier: Term, name: String)(implicit ctx: Context): Select = {
     val denot = qualifier.tpe.member(name.toTermName)
     assert(!denot.isOverloaded, s"The symbol `$name` is overloaded. The method Select.unique can only be used for non-overloaded symbols.")
+    println(s"qualifier: ${qualifier.show}")
+    println(s"name: $name")
     withDefaultPos(implicit ctx => tpd.Select(qualifier, name.toTermName))
   }
 
@@ -1670,7 +1672,7 @@ class KernelImpl(val rootContext: core.Contexts.Context, val rootPosition: util.
 
   type NoSymbol = core.Symbols.NoSymbol.type
 
-  def matchNoSymbol(symbol: Symbol)(implicit ctx: Context): Boolean = symbol ne core.Symbols.NoSymbol
+  def matchNoSymbol(symbol: Symbol)(implicit ctx: Context): Boolean = symbol eq core.Symbols.NoSymbol
 
   //
   // FLAGS
