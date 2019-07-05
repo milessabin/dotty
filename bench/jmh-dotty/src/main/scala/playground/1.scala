@@ -986,6 +986,7 @@ case class P100(
 )
 
 sealed trait C10
+object C10
 
 case class C10_A0(i: I) extends C10
 case class C10_B0(b: B) extends C10
@@ -998,78 +999,77 @@ case class C10_H0(b: B) extends C10
 case class C10_I0(i: I) extends C10
 case class C10_J0(b: B) extends C10
 
-enum C20 {
-  case A0(i: I); case B0(b: B); case C0(i: I); case D0(b: B); case E0(i: I); case F0(b: B); case G0(i: I); case H0(b: B); case I0(i: I); case J0(b: B);
-  case A1(i: I); case B1(b: B); case C1(i: I); case D1(b: B); case E1(i: I); case F1(b: B); case G1(i: I); case H1(b: B); case I1(i: I); case J1(b: B)
-}
-enum C30 {
-  case A0(i: I); case B0(b: B); case C0(i: I); case D0(b: B); case E0(i: I); case F0(b: B); case G0(i: I); case H0(b: B); case I0(i: I); case J0(b: B);
-  case A1(i: I); case B1(b: B); case C1(i: I); case D1(b: B); case E1(i: I); case F1(b: B); case G1(i: I); case H1(b: B); case I1(i: I); case J1(b: B);
-  case A2(i: I); case B2(b: B); case C2(i: I); case D2(b: B); case E2(i: I); case F2(b: B); case G2(i: I); case H2(b: B); case I2(i: I); case J2(b: B)
-}
-enum C40 {
-  case A0(i: I); case B0(b: B); case C0(i: I); case D0(b: B); case E0(i: I); case F0(b: B); case G0(i: I); case H0(b: B); case I0(i: I); case J0(b: B);
-  case A1(i: I); case B1(b: B); case C1(i: I); case D1(b: B); case E1(i: I); case F1(b: B); case G1(i: I); case H1(b: B); case I1(i: I); case J1(b: B);
-  case A2(i: I); case B2(b: B); case C2(i: I); case D2(b: B); case E2(i: I); case F2(b: B); case G2(i: I); case H2(b: B); case I2(i: I); case J2(b: B);
-  case A3(i: I); case B3(b: B); case C3(i: I); case D3(b: B); case E3(i: I); case F3(b: B); case G3(i: I); case H3(b: B); case I3(i: I); case J3(b: B)
-}
-enum C50 {
-  case A0(i: I); case B0(b: B); case C0(i: I); case D0(b: B); case E0(i: I); case F0(b: B); case G0(i: I); case H0(b: B); case I0(i: I); case J0(b: B);
-  case A1(i: I); case B1(b: B); case C1(i: I); case D1(b: B); case E1(i: I); case F1(b: B); case G1(i: I); case H1(b: B); case I1(i: I); case J1(b: B);
-  case A2(i: I); case B2(b: B); case C2(i: I); case D2(b: B); case E2(i: I); case F2(b: B); case G2(i: I); case H2(b: B); case I2(i: I); case J2(b: B);
-  case A3(i: I); case B3(b: B); case C3(i: I); case D3(b: B); case E3(i: I); case F3(b: B); case G3(i: I); case H3(b: B); case I3(i: I); case J3(b: B);
-  case A4(i: I); case B4(b: B); case C4(i: I); case D4(b: B); case E4(i: I); case F4(b: B); case G4(i: I); case H4(b: B); case I4(i: I); case J4(b: B)
-}
-enum C60 {
-  case A0(i: I); case B0(b: B); case C0(i: I); case D0(b: B); case E0(i: I); case F0(b: B); case G0(i: I); case H0(b: B); case I0(i: I); case J0(b: B);
-  case A1(i: I); case B1(b: B); case C1(i: I); case D1(b: B); case E1(i: I); case F1(b: B); case G1(i: I); case H1(b: B); case I1(i: I); case J1(b: B);
-  case A2(i: I); case B2(b: B); case C2(i: I); case D2(b: B); case E2(i: I); case F2(b: B); case G2(i: I); case H2(b: B); case I2(i: I); case J2(b: B);
-  case A3(i: I); case B3(b: B); case C3(i: I); case D3(b: B); case E3(i: I); case F3(b: B); case G3(i: I); case H3(b: B); case I3(i: I); case J3(b: B);
-  case A4(i: I); case B4(b: B); case C4(i: I); case D4(b: B); case E4(i: I); case F4(b: B); case G4(i: I); case H4(b: B); case I4(i: I); case J4(b: B);
-  case A5(i: I); case B5(b: B); case C5(i: I); case D5(b: B); case E5(i: I); case F5(b: B); case G5(i: I); case H5(b: B); case I5(i: I); case J5(b: B)
-}
-enum C70 {
-  case A0(i: I); case B0(b: B); case C0(i: I); case D0(b: B); case E0(i: I); case F0(b: B); case G0(i: I); case H0(b: B); case I0(i: I); case J0(b: B);
-  case A1(i: I); case B1(b: B); case C1(i: I); case D1(b: B); case E1(i: I); case F1(b: B); case G1(i: I); case H1(b: B); case I1(i: I); case J1(b: B);
-  case A2(i: I); case B2(b: B); case C2(i: I); case D2(b: B); case E2(i: I); case F2(b: B); case G2(i: I); case H2(b: B); case I2(i: I); case J2(b: B);
-  case A3(i: I); case B3(b: B); case C3(i: I); case D3(b: B); case E3(i: I); case F3(b: B); case G3(i: I); case H3(b: B); case I3(i: I); case J3(b: B);
-  case A4(i: I); case B4(b: B); case C4(i: I); case D4(b: B); case E4(i: I); case F4(b: B); case G4(i: I); case H4(b: B); case I4(i: I); case J4(b: B);
-  case A5(i: I); case B5(b: B); case C5(i: I); case D5(b: B); case E5(i: I); case F5(b: B); case G5(i: I); case H5(b: B); case I5(i: I); case J5(b: B);
-  case A6(i: I); case B6(b: B); case C6(i: I); case D6(b: B); case E6(i: I); case F6(b: B); case G6(i: I); case H6(b: B); case I6(i: I); case J6(b: B)
-}
-enum C80 {
-  case A0(i: I); case B0(b: B); case C0(i: I); case D0(b: B); case E0(i: I); case F0(b: B); case G0(i: I); case H0(b: B); case I0(i: I); case J0(b: B);
-  case A1(i: I); case B1(b: B); case C1(i: I); case D1(b: B); case E1(i: I); case F1(b: B); case G1(i: I); case H1(b: B); case I1(i: I); case J1(b: B);
-  case A2(i: I); case B2(b: B); case C2(i: I); case D2(b: B); case E2(i: I); case F2(b: B); case G2(i: I); case H2(b: B); case I2(i: I); case J2(b: B);
-  case A3(i: I); case B3(b: B); case C3(i: I); case D3(b: B); case E3(i: I); case F3(b: B); case G3(i: I); case H3(b: B); case I3(i: I); case J3(b: B);
-  case A4(i: I); case B4(b: B); case C4(i: I); case D4(b: B); case E4(i: I); case F4(b: B); case G4(i: I); case H4(b: B); case I4(i: I); case J4(b: B);
-  case A5(i: I); case B5(b: B); case C5(i: I); case D5(b: B); case E5(i: I); case F5(b: B); case G5(i: I); case H5(b: B); case I5(i: I); case J5(b: B);
-  case A6(i: I); case B6(b: B); case C6(i: I); case D6(b: B); case E6(i: I); case F6(b: B); case G6(i: I); case H6(b: B); case I6(i: I); case J6(b: B);
-  case A7(i: I); case B7(b: B); case C7(i: I); case D7(b: B); case E7(i: I); case F7(b: B); case G7(i: I); case H7(b: B); case I7(i: I); case J7(b: B)
-}
-enum C90 {
-  case A0(i: I); case B0(b: B); case C0(i: I); case D0(b: B); case E0(i: I); case F0(b: B); case G0(i: I); case H0(b: B); case I0(i: I); case J0(b: B);
-  case A1(i: I); case B1(b: B); case C1(i: I); case D1(b: B); case E1(i: I); case F1(b: B); case G1(i: I); case H1(b: B); case I1(i: I); case J1(b: B);
-  case A2(i: I); case B2(b: B); case C2(i: I); case D2(b: B); case E2(i: I); case F2(b: B); case G2(i: I); case H2(b: B); case I2(i: I); case J2(b: B);
-  case A3(i: I); case B3(b: B); case C3(i: I); case D3(b: B); case E3(i: I); case F3(b: B); case G3(i: I); case H3(b: B); case I3(i: I); case J3(b: B);
-  case A4(i: I); case B4(b: B); case C4(i: I); case D4(b: B); case E4(i: I); case F4(b: B); case G4(i: I); case H4(b: B); case I4(i: I); case J4(b: B);
-  case A5(i: I); case B5(b: B); case C5(i: I); case D5(b: B); case E5(i: I); case F5(b: B); case G5(i: I); case H5(b: B); case I5(i: I); case J5(b: B);
-  case A6(i: I); case B6(b: B); case C6(i: I); case D6(b: B); case E6(i: I); case F6(b: B); case G6(i: I); case H6(b: B); case I6(i: I); case J6(b: B);
-  case A7(i: I); case B7(b: B); case C7(i: I); case D7(b: B); case E7(i: I); case F7(b: B); case G7(i: I); case H7(b: B); case I7(i: I); case J7(b: B);
-  case A8(i: I); case B8(b: B); case C8(i: I); case D8(b: B); case E8(i: I); case F8(b: B); case G8(i: I); case H8(b: B); case I8(i: I); case J8(b: B)
-}
-enum C100 {
-  case A0(i: I); case B0(b: B); case C0(i: I); case D0(b: B); case E0(i: I); case F0(b: B); case G0(i: I); case H0(b: B); case I0(i: I); case J0(b: B);
-  case A1(i: I); case B1(b: B); case C1(i: I); case D1(b: B); case E1(i: I); case F1(b: B); case G1(i: I); case H1(b: B); case I1(i: I); case J1(b: B);
-  case A2(i: I); case B2(b: B); case C2(i: I); case D2(b: B); case E2(i: I); case F2(b: B); case G2(i: I); case H2(b: B); case I2(i: I); case J2(b: B);
-  case A3(i: I); case B3(b: B); case C3(i: I); case D3(b: B); case E3(i: I); case F3(b: B); case G3(i: I); case H3(b: B); case I3(i: I); case J3(b: B);
-  case A4(i: I); case B4(b: B); case C4(i: I); case D4(b: B); case E4(i: I); case F4(b: B); case G4(i: I); case H4(b: B); case I4(i: I); case J4(b: B);
-  case A5(i: I); case B5(b: B); case C5(i: I); case D5(b: B); case E5(i: I); case F5(b: B); case G5(i: I); case H5(b: B); case I5(i: I); case J5(b: B);
-  case A6(i: I); case B6(b: B); case C6(i: I); case D6(b: B); case E6(i: I); case F6(b: B); case G6(i: I); case H6(b: B); case I6(i: I); case J6(b: B);
-  case A7(i: I); case B7(b: B); case C7(i: I); case D7(b: B); case E7(i: I); case F7(b: B); case G7(i: I); case H7(b: B); case I7(i: I); case J7(b: B);
-  case A8(i: I); case B8(b: B); case C8(i: I); case D8(b: B); case E8(i: I); case F8(b: B); case G8(i: I); case H8(b: B); case I8(i: I); case J8(b: B);
-  case A9(i: I); case B9(b: B); case C9(i: I); case D9(b: B); case E9(i: I); case F9(b: B); case G9(i: I); case H9(b: B); case I9(i: I); case J9(b: B)
-}
+sealed trait C20; object C20
+  case class C20_A0(i: I) extends C20; case class C20_B0(b: B) extends C20; case class C20_C0(i: I) extends C20; case class C20_D0(b: B) extends C20; case class C20_E0(i: I) extends C20; case class C20_F0(b: B) extends C20; case class C20_G0(i: I) extends C20; case class C20_H0(b: B) extends C20; case class C20_I0(i: I) extends C20; case class C20_J0(b: B) extends C20;
+  case class C20_A1(i: I) extends C20; case class C20_B1(b: B) extends C20; case class C20_C1(i: I) extends C20; case class C20_D1(b: B) extends C20; case class C20_E1(i: I) extends C20; case class C20_F1(b: B) extends C20; case class C20_G1(i: I) extends C20; case class C20_H1(b: B) extends C20; case class C20_I1(i: I) extends C20; case class C20_J1(b: B) extends C20
+
+sealed trait C30; object C30
+  case class C30_A0(i: I) extends C30; case class C30_B0(b: B) extends C30; case class C30_C0(i: I) extends C30; case class C30_D0(b: B) extends C30; case class C30_E0(i: I) extends C30; case class C30_F0(b: B) extends C30; case class C30_G0(i: I) extends C30; case class C30_H0(b: B) extends C30; case class C30_I0(i: I) extends C30; case class C30_J0(b: B) extends C30;
+  case class C30_A1(i: I) extends C30; case class C30_B1(b: B) extends C30; case class C30_C1(i: I) extends C30; case class C30_D1(b: B) extends C30; case class C30_E1(i: I) extends C30; case class C30_F1(b: B) extends C30; case class C30_G1(i: I) extends C30; case class C30_H1(b: B) extends C30; case class C30_I1(i: I) extends C30; case class C30_J1(b: B) extends C30;
+  case class C30_A2(i: I) extends C30; case class C30_B2(b: B) extends C30; case class C30_C2(i: I) extends C30; case class C30_D2(b: B) extends C30; case class C30_E2(i: I) extends C30; case class C30_F2(b: B) extends C30; case class C30_G2(i: I) extends C30; case class C30_H2(b: B) extends C30; case class C30_I2(i: I) extends C30; case class C30_J2(b: B) extends C30
+
+sealed trait C40; object C40
+  case class C40_A0(i: I) extends C40; case class C40_B0(b: B) extends C40; case class C40_C0(i: I) extends C40; case class C40_D0(b: B) extends C40; case class C40_E0(i: I) extends C40; case class C40_F0(b: B) extends C40; case class C40_G0(i: I) extends C40; case class C40_H0(b: B) extends C40; case class C40_I0(i: I) extends C40; case class C40_J0(b: B) extends C40;
+  case class C40_A1(i: I) extends C40; case class C40_B1(b: B) extends C40; case class C40_C1(i: I) extends C40; case class C40_D1(b: B) extends C40; case class C40_E1(i: I) extends C40; case class C40_F1(b: B) extends C40; case class C40_G1(i: I) extends C40; case class C40_H1(b: B) extends C40; case class C40_I1(i: I) extends C40; case class C40_J1(b: B) extends C40;
+  case class C40_A2(i: I) extends C40; case class C40_B2(b: B) extends C40; case class C40_C2(i: I) extends C40; case class C40_D2(b: B) extends C40; case class C40_E2(i: I) extends C40; case class C40_F2(b: B) extends C40; case class C40_G2(i: I) extends C40; case class C40_H2(b: B) extends C40; case class C40_I2(i: I) extends C40; case class C40_J2(b: B) extends C40;
+  case class C40_A3(i: I) extends C40; case class C40_B3(b: B) extends C40; case class C40_C3(i: I) extends C40; case class C40_D3(b: B) extends C40; case class C40_E3(i: I) extends C40; case class C40_F3(b: B) extends C40; case class C40_G3(i: I) extends C40; case class C40_H3(b: B) extends C40; case class C40_I3(i: I) extends C40; case class C40_J3(b: B) extends C40
+
+sealed trait C50; object C50
+  case class C50_A0(i: I) extends C50; case class C50_B0(b: B) extends C50; case class C50_C0(i: I) extends C50; case class C50_D0(b: B) extends C50; case class C50_E0(i: I) extends C50; case class C50_F0(b: B) extends C50; case class C50_G0(i: I) extends C50; case class C50_H0(b: B) extends C50; case class C50_I0(i: I) extends C50; case class C50_J0(b: B) extends C50;
+  case class C50_A1(i: I) extends C50; case class C50_B1(b: B) extends C50; case class C50_C1(i: I) extends C50; case class C50_D1(b: B) extends C50; case class C50_E1(i: I) extends C50; case class C50_F1(b: B) extends C50; case class C50_G1(i: I) extends C50; case class C50_H1(b: B) extends C50; case class C50_I1(i: I) extends C50; case class C50_J1(b: B) extends C50;
+  case class C50_A2(i: I) extends C50; case class C50_B2(b: B) extends C50; case class C50_C2(i: I) extends C50; case class C50_D2(b: B) extends C50; case class C50_E2(i: I) extends C50; case class C50_F2(b: B) extends C50; case class C50_G2(i: I) extends C50; case class C50_H2(b: B) extends C50; case class C50_I2(i: I) extends C50; case class C50_J2(b: B) extends C50;
+  case class C50_A3(i: I) extends C50; case class C50_B3(b: B) extends C50; case class C50_C3(i: I) extends C50; case class C50_D3(b: B) extends C50; case class C50_E3(i: I) extends C50; case class C50_F3(b: B) extends C50; case class C50_G3(i: I) extends C50; case class C50_H3(b: B) extends C50; case class C50_I3(i: I) extends C50; case class C50_J3(b: B) extends C50;
+  case class C50_A4(i: I) extends C50; case class C50_B4(b: B) extends C50; case class C50_C4(i: I) extends C50; case class C50_D4(b: B) extends C50; case class C50_E4(i: I) extends C50; case class C50_F4(b: B) extends C50; case class C50_G4(i: I) extends C50; case class C50_H4(b: B) extends C50; case class C50_I4(i: I) extends C50; case class C50_J4(b: B) extends C50
+
+sealed trait C60; object C60
+  case class C60_A0(i: I) extends C60; case class C60_B0(b: B) extends C60; case class C60_C0(i: I) extends C60; case class C60_D0(b: B) extends C60; case class C60_E0(i: I) extends C60; case class C60_F0(b: B) extends C60; case class C60_G0(i: I) extends C60; case class C60_H0(b: B) extends C60; case class C60_I0(i: I) extends C60; case class C60_J0(b: B) extends C60;
+  case class C60_A1(i: I) extends C60; case class C60_B1(b: B) extends C60; case class C60_C1(i: I) extends C60; case class C60_D1(b: B) extends C60; case class C60_E1(i: I) extends C60; case class C60_F1(b: B) extends C60; case class C60_G1(i: I) extends C60; case class C60_H1(b: B) extends C60; case class C60_I1(i: I) extends C60; case class C60_J1(b: B) extends C60;
+  case class C60_A2(i: I) extends C60; case class C60_B2(b: B) extends C60; case class C60_C2(i: I) extends C60; case class C60_D2(b: B) extends C60; case class C60_E2(i: I) extends C60; case class C60_F2(b: B) extends C60; case class C60_G2(i: I) extends C60; case class C60_H2(b: B) extends C60; case class C60_I2(i: I) extends C60; case class C60_J2(b: B) extends C60;
+  case class C60_A3(i: I) extends C60; case class C60_B3(b: B) extends C60; case class C60_C3(i: I) extends C60; case class C60_D3(b: B) extends C60; case class C60_E3(i: I) extends C60; case class C60_F3(b: B) extends C60; case class C60_G3(i: I) extends C60; case class C60_H3(b: B) extends C60; case class C60_I3(i: I) extends C60; case class C60_J3(b: B) extends C60;
+  case class C60_A4(i: I) extends C60; case class C60_B4(b: B) extends C60; case class C60_C4(i: I) extends C60; case class C60_D4(b: B) extends C60; case class C60_E4(i: I) extends C60; case class C60_F4(b: B) extends C60; case class C60_G4(i: I) extends C60; case class C60_H4(b: B) extends C60; case class C60_I4(i: I) extends C60; case class C60_J4(b: B) extends C60;
+  case class C60_A5(i: I) extends C60; case class C60_B5(b: B) extends C60; case class C60_C5(i: I) extends C60; case class C60_D5(b: B) extends C60; case class C60_E5(i: I) extends C60; case class C60_F5(b: B) extends C60; case class C60_G5(i: I) extends C60; case class C60_H5(b: B) extends C60; case class C60_I5(i: I) extends C60; case class C60_J5(b: B) extends C60
+
+sealed trait C70; object C70
+  case class C70_A0(i: I) extends C70; case class C70_B0(b: B) extends C70; case class C70_C0(i: I) extends C70; case class C70_D0(b: B) extends C70; case class C70_E0(i: I) extends C70; case class C70_F0(b: B) extends C70; case class C70_G0(i: I) extends C70; case class C70_H0(b: B) extends C70; case class C70_I0(i: I) extends C70; case class C70_J0(b: B) extends C70;
+  case class C70_A1(i: I) extends C70; case class C70_B1(b: B) extends C70; case class C70_C1(i: I) extends C70; case class C70_D1(b: B) extends C70; case class C70_E1(i: I) extends C70; case class C70_F1(b: B) extends C70; case class C70_G1(i: I) extends C70; case class C70_H1(b: B) extends C70; case class C70_I1(i: I) extends C70; case class C70_J1(b: B) extends C70;
+  case class C70_A2(i: I) extends C70; case class C70_B2(b: B) extends C70; case class C70_C2(i: I) extends C70; case class C70_D2(b: B) extends C70; case class C70_E2(i: I) extends C70; case class C70_F2(b: B) extends C70; case class C70_G2(i: I) extends C70; case class C70_H2(b: B) extends C70; case class C70_I2(i: I) extends C70; case class C70_J2(b: B) extends C70;
+  case class C70_A3(i: I) extends C70; case class C70_B3(b: B) extends C70; case class C70_C3(i: I) extends C70; case class C70_D3(b: B) extends C70; case class C70_E3(i: I) extends C70; case class C70_F3(b: B) extends C70; case class C70_G3(i: I) extends C70; case class C70_H3(b: B) extends C70; case class C70_I3(i: I) extends C70; case class C70_J3(b: B) extends C70;
+  case class C70_A4(i: I) extends C70; case class C70_B4(b: B) extends C70; case class C70_C4(i: I) extends C70; case class C70_D4(b: B) extends C70; case class C70_E4(i: I) extends C70; case class C70_F4(b: B) extends C70; case class C70_G4(i: I) extends C70; case class C70_H4(b: B) extends C70; case class C70_I4(i: I) extends C70; case class C70_J4(b: B) extends C70;
+  case class C70_A5(i: I) extends C70; case class C70_B5(b: B) extends C70; case class C70_C5(i: I) extends C70; case class C70_D5(b: B) extends C70; case class C70_E5(i: I) extends C70; case class C70_F5(b: B) extends C70; case class C70_G5(i: I) extends C70; case class C70_H5(b: B) extends C70; case class C70_I5(i: I) extends C70; case class C70_J5(b: B) extends C70;
+  case class C70_A6(i: I) extends C70; case class C70_B6(b: B) extends C70; case class C70_C6(i: I) extends C70; case class C70_D6(b: B) extends C70; case class C70_E6(i: I) extends C70; case class C70_F6(b: B) extends C70; case class C70_G6(i: I) extends C70; case class C70_H6(b: B) extends C70; case class C70_I6(i: I) extends C70; case class C70_J6(b: B) extends C70
+
+sealed trait C80; object C80
+  case class C80_A0(i: I) extends C80; case class C80_B0(b: B) extends C80; case class C80_C0(i: I) extends C80; case class C80_D0(b: B) extends C80; case class C80_E0(i: I) extends C80; case class C80_F0(b: B) extends C80; case class C80_G0(i: I) extends C80; case class C80_H0(b: B) extends C80; case class C80_I0(i: I) extends C80; case class C80_J0(b: B) extends C80;
+  case class C80_A1(i: I) extends C80; case class C80_B1(b: B) extends C80; case class C80_C1(i: I) extends C80; case class C80_D1(b: B) extends C80; case class C80_E1(i: I) extends C80; case class C80_F1(b: B) extends C80; case class C80_G1(i: I) extends C80; case class C80_H1(b: B) extends C80; case class C80_I1(i: I) extends C80; case class C80_J1(b: B) extends C80;
+  case class C80_A2(i: I) extends C80; case class C80_B2(b: B) extends C80; case class C80_C2(i: I) extends C80; case class C80_D2(b: B) extends C80; case class C80_E2(i: I) extends C80; case class C80_F2(b: B) extends C80; case class C80_G2(i: I) extends C80; case class C80_H2(b: B) extends C80; case class C80_I2(i: I) extends C80; case class C80_J2(b: B) extends C80;
+  case class C80_A3(i: I) extends C80; case class C80_B3(b: B) extends C80; case class C80_C3(i: I) extends C80; case class C80_D3(b: B) extends C80; case class C80_E3(i: I) extends C80; case class C80_F3(b: B) extends C80; case class C80_G3(i: I) extends C80; case class C80_H3(b: B) extends C80; case class C80_I3(i: I) extends C80; case class C80_J3(b: B) extends C80;
+  case class C80_A4(i: I) extends C80; case class C80_B4(b: B) extends C80; case class C80_C4(i: I) extends C80; case class C80_D4(b: B) extends C80; case class C80_E4(i: I) extends C80; case class C80_F4(b: B) extends C80; case class C80_G4(i: I) extends C80; case class C80_H4(b: B) extends C80; case class C80_I4(i: I) extends C80; case class C80_J4(b: B) extends C80;
+  case class C80_A5(i: I) extends C80; case class C80_B5(b: B) extends C80; case class C80_C5(i: I) extends C80; case class C80_D5(b: B) extends C80; case class C80_E5(i: I) extends C80; case class C80_F5(b: B) extends C80; case class C80_G5(i: I) extends C80; case class C80_H5(b: B) extends C80; case class C80_I5(i: I) extends C80; case class C80_J5(b: B) extends C80;
+  case class C80_A6(i: I) extends C80; case class C80_B6(b: B) extends C80; case class C80_C6(i: I) extends C80; case class C80_D6(b: B) extends C80; case class C80_E6(i: I) extends C80; case class C80_F6(b: B) extends C80; case class C80_G6(i: I) extends C80; case class C80_H6(b: B) extends C80; case class C80_I6(i: I) extends C80; case class C80_J6(b: B) extends C80;
+  case class C80_A7(i: I) extends C80; case class C80_B7(b: B) extends C80; case class C80_C7(i: I) extends C80; case class C80_D7(b: B) extends C80; case class C80_E7(i: I) extends C80; case class C80_F7(b: B) extends C80; case class C80_G7(i: I) extends C80; case class C80_H7(b: B) extends C80; case class C80_I7(i: I) extends C80; case class C80_J7(b: B) extends C80
+
+sealed trait C90; object C90
+  case class C90_A0(i: I) extends C90; case class C90_B0(b: B) extends C90; case class C90_C0(i: I) extends C90; case class C90_D0(b: B) extends C90; case class C90_E0(i: I) extends C90; case class C90_F0(b: B) extends C90; case class C90_G0(i: I) extends C90; case class C90_H0(b: B) extends C90; case class C90_I0(i: I) extends C90; case class C90_J0(b: B) extends C90;
+  case class C90_A1(i: I) extends C90; case class C90_B1(b: B) extends C90; case class C90_C1(i: I) extends C90; case class C90_D1(b: B) extends C90; case class C90_E1(i: I) extends C90; case class C90_F1(b: B) extends C90; case class C90_G1(i: I) extends C90; case class C90_H1(b: B) extends C90; case class C90_I1(i: I) extends C90; case class C90_J1(b: B) extends C90;
+  case class C90_A2(i: I) extends C90; case class C90_B2(b: B) extends C90; case class C90_C2(i: I) extends C90; case class C90_D2(b: B) extends C90; case class C90_E2(i: I) extends C90; case class C90_F2(b: B) extends C90; case class C90_G2(i: I) extends C90; case class C90_H2(b: B) extends C90; case class C90_I2(i: I) extends C90; case class C90_J2(b: B) extends C90;
+  case class C90_A3(i: I) extends C90; case class C90_B3(b: B) extends C90; case class C90_C3(i: I) extends C90; case class C90_D3(b: B) extends C90; case class C90_E3(i: I) extends C90; case class C90_F3(b: B) extends C90; case class C90_G3(i: I) extends C90; case class C90_H3(b: B) extends C90; case class C90_I3(i: I) extends C90; case class C90_J3(b: B) extends C90;
+  case class C90_A4(i: I) extends C90; case class C90_B4(b: B) extends C90; case class C90_C4(i: I) extends C90; case class C90_D4(b: B) extends C90; case class C90_E4(i: I) extends C90; case class C90_F4(b: B) extends C90; case class C90_G4(i: I) extends C90; case class C90_H4(b: B) extends C90; case class C90_I4(i: I) extends C90; case class C90_J4(b: B) extends C90;
+  case class C90_A5(i: I) extends C90; case class C90_B5(b: B) extends C90; case class C90_C5(i: I) extends C90; case class C90_D5(b: B) extends C90; case class C90_E5(i: I) extends C90; case class C90_F5(b: B) extends C90; case class C90_G5(i: I) extends C90; case class C90_H5(b: B) extends C90; case class C90_I5(i: I) extends C90; case class C90_J5(b: B) extends C90;
+  case class C90_A6(i: I) extends C90; case class C90_B6(b: B) extends C90; case class C90_C6(i: I) extends C90; case class C90_D6(b: B) extends C90; case class C90_E6(i: I) extends C90; case class C90_F6(b: B) extends C90; case class C90_G6(i: I) extends C90; case class C90_H6(b: B) extends C90; case class C90_I6(i: I) extends C90; case class C90_J6(b: B) extends C90;
+  case class C90_A7(i: I) extends C90; case class C90_B7(b: B) extends C90; case class C90_C7(i: I) extends C90; case class C90_D7(b: B) extends C90; case class C90_E7(i: I) extends C90; case class C90_F7(b: B) extends C90; case class C90_G7(i: I) extends C90; case class C90_H7(b: B) extends C90; case class C90_I7(i: I) extends C90; case class C90_J7(b: B) extends C90;
+  case class C90_A8(i: I) extends C90; case class C90_B8(b: B) extends C90; case class C90_C8(i: I) extends C90; case class C90_D8(b: B) extends C90; case class C90_E8(i: I) extends C90; case class C90_F8(b: B) extends C90; case class C90_G8(i: I) extends C90; case class C90_H8(b: B) extends C90; case class C90_I8(i: I) extends C90; case class C90_J8(b: B) extends C90
+
+sealed trait C100; object C100
+  case class C100_A0(i: I) extends C100; case class C100_B0(b: B) extends C100; case class C100_C0(i: I) extends C100; case class C100_D0(b: B) extends C100; case class C100_E0(i: I) extends C100; case class C100_F0(b: B) extends C100; case class C100_G0(i: I) extends C100; case class C100_H0(b: B) extends C100; case class C100_I0(i: I) extends C100; case class C100_J0(b: B) extends C100;
+  case class C100_A1(i: I) extends C100; case class C100_B1(b: B) extends C100; case class C100_C1(i: I) extends C100; case class C100_D1(b: B) extends C100; case class C100_E1(i: I) extends C100; case class C100_F1(b: B) extends C100; case class C100_G1(i: I) extends C100; case class C100_H1(b: B) extends C100; case class C100_I1(i: I) extends C100; case class C100_J1(b: B) extends C100;
+  case class C100_A2(i: I) extends C100; case class C100_B2(b: B) extends C100; case class C100_C2(i: I) extends C100; case class C100_D2(b: B) extends C100; case class C100_E2(i: I) extends C100; case class C100_F2(b: B) extends C100; case class C100_G2(i: I) extends C100; case class C100_H2(b: B) extends C100; case class C100_I2(i: I) extends C100; case class C100_J2(b: B) extends C100;
+  case class C100_A3(i: I) extends C100; case class C100_B3(b: B) extends C100; case class C100_C3(i: I) extends C100; case class C100_D3(b: B) extends C100; case class C100_E3(i: I) extends C100; case class C100_F3(b: B) extends C100; case class C100_G3(i: I) extends C100; case class C100_H3(b: B) extends C100; case class C100_I3(i: I) extends C100; case class C100_J3(b: B) extends C100;
+  case class C100_A4(i: I) extends C100; case class C100_B4(b: B) extends C100; case class C100_C4(i: I) extends C100; case class C100_D4(b: B) extends C100; case class C100_E4(i: I) extends C100; case class C100_F4(b: B) extends C100; case class C100_G4(i: I) extends C100; case class C100_H4(b: B) extends C100; case class C100_I4(i: I) extends C100; case class C100_J4(b: B) extends C100;
+  case class C100_A5(i: I) extends C100; case class C100_B5(b: B) extends C100; case class C100_C5(i: I) extends C100; case class C100_D5(b: B) extends C100; case class C100_E5(i: I) extends C100; case class C100_F5(b: B) extends C100; case class C100_G5(i: I) extends C100; case class C100_H5(b: B) extends C100; case class C100_I5(i: I) extends C100; case class C100_J5(b: B) extends C100;
+  case class C100_A6(i: I) extends C100; case class C100_B6(b: B) extends C100; case class C100_C6(i: I) extends C100; case class C100_D6(b: B) extends C100; case class C100_E6(i: I) extends C100; case class C100_F6(b: B) extends C100; case class C100_G6(i: I) extends C100; case class C100_H6(b: B) extends C100; case class C100_I6(i: I) extends C100; case class C100_J6(b: B) extends C100;
+  case class C100_A7(i: I) extends C100; case class C100_B7(b: B) extends C100; case class C100_C7(i: I) extends C100; case class C100_D7(b: B) extends C100; case class C100_E7(i: I) extends C100; case class C100_F7(b: B) extends C100; case class C100_G7(i: I) extends C100; case class C100_H7(b: B) extends C100; case class C100_I7(i: I) extends C100; case class C100_J7(b: B) extends C100;
+  case class C100_A8(i: I) extends C100; case class C100_B8(b: B) extends C100; case class C100_C8(i: I) extends C100; case class C100_D8(b: B) extends C100; case class C100_E8(i: I) extends C100; case class C100_F8(b: B) extends C100; case class C100_G8(i: I) extends C100; case class C100_H8(b: B) extends C100; case class C100_I8(i: I) extends C100; case class C100_J8(b: B) extends C100;
+  case class C100_A9(i: I) extends C100; case class C100_B9(b: B) extends C100; case class C100_C9(i: I) extends C100; case class C100_D9(b: B) extends C100; case class C100_E9(i: I) extends C100; case class C100_F9(b: B) extends C100; case class C100_G9(i: I) extends C100; case class C100_H9(b: B) extends C100; case class C100_I9(i: I) extends C100; case class C100_J9(b: B) extends C100
 
 case class PK0[A]()
 case class PK10[A](
@@ -1149,78 +1149,89 @@ case class PK100[A](
 )
 
 sealed trait CK0[+A]
-enum CK10[+A] {
-  case A0(a: A); case B0(b: B); case C0(a: A); case D0(b: B); case E0(a: A); case F0(b: B); case G0(a: A); case H0(b: B); case I0(a: A); case J0(b: B);
-}
-enum CK20[+A] {
-  case A0(a: A); case B0(b: B); case C0(a: A); case D0(b: B); case E0(a: A); case F0(b: B); case G0(a: A); case H0(b: B); case I0(a: A); case J0(b: B);
-  case A1(a: A); case B1(b: B); case C1(a: A); case D1(b: B); case E1(a: A); case F1(b: B); case G1(a: A); case H1(b: B); case I1(a: A); case J1(b: B)
-}
-enum CK30[+A] {
-  case A0(a: A); case B0(b: B); case C0(a: A); case D0(b: B); case E0(a: A); case F0(b: B); case G0(a: A); case H0(b: B); case I0(a: A); case J0(b: B);
-  case A1(a: A); case B1(b: B); case C1(a: A); case D1(b: B); case E1(a: A); case F1(b: B); case G1(a: A); case H1(b: B); case I1(a: A); case J1(b: B);
-  case A2(a: A); case B2(b: B); case C2(a: A); case D2(b: B); case E2(a: A); case F2(b: B); case G2(a: A); case H2(b: B); case I2(a: A); case J2(b: B)
-}
-enum CK40[+A] {
-  case A0(a: A); case B0(b: B); case C0(a: A); case D0(b: B); case E0(a: A); case F0(b: B); case G0(a: A); case H0(b: B); case I0(a: A); case J0(b: B);
-  case A1(a: A); case B1(b: B); case C1(a: A); case D1(b: B); case E1(a: A); case F1(b: B); case G1(a: A); case H1(b: B); case I1(a: A); case J1(b: B);
-  case A2(a: A); case B2(b: B); case C2(a: A); case D2(b: B); case E2(a: A); case F2(b: B); case G2(a: A); case H2(b: B); case I2(a: A); case J2(b: B);
-  case A3(a: A); case B3(b: B); case C3(a: A); case D3(b: B); case E3(a: A); case F3(b: B); case G3(a: A); case H3(b: B); case I3(a: A); case J3(b: B)
-}
-enum CK50[+A] {
-  case A0(a: A); case B0(b: B); case C0(a: A); case D0(b: B); case E0(a: A); case F0(b: B); case G0(a: A); case H0(b: B); case I0(a: A); case J0(b: B);
-  case A1(a: A); case B1(b: B); case C1(a: A); case D1(b: B); case E1(a: A); case F1(b: B); case G1(a: A); case H1(b: B); case I1(a: A); case J1(b: B);
-  case A2(a: A); case B2(b: B); case C2(a: A); case D2(b: B); case E2(a: A); case F2(b: B); case G2(a: A); case H2(b: B); case I2(a: A); case J2(b: B);
-  case A3(a: A); case B3(b: B); case C3(a: A); case D3(b: B); case E3(a: A); case F3(b: B); case G3(a: A); case H3(b: B); case I3(a: A); case J3(b: B);
-  case A4(a: A); case B4(b: B); case C4(a: A); case D4(b: B); case E4(a: A); case F4(b: B); case G4(a: A); case H4(b: B); case I4(a: A); case J4(b: B)
-}
-enum CK60[+A] {
-  case A0(a: A); case B0(b: B); case C0(a: A); case D0(b: B); case E0(a: A); case F0(b: B); case G0(a: A); case H0(b: B); case I0(a: A); case J0(b: B);
-  case A1(a: A); case B1(b: B); case C1(a: A); case D1(b: B); case E1(a: A); case F1(b: B); case G1(a: A); case H1(b: B); case I1(a: A); case J1(b: B);
-  case A2(a: A); case B2(b: B); case C2(a: A); case D2(b: B); case E2(a: A); case F2(b: B); case G2(a: A); case H2(b: B); case I2(a: A); case J2(b: B);
-  case A3(a: A); case B3(b: B); case C3(a: A); case D3(b: B); case E3(a: A); case F3(b: B); case G3(a: A); case H3(b: B); case I3(a: A); case J3(b: B);
-  case A4(a: A); case B4(b: B); case C4(a: A); case D4(b: B); case E4(a: A); case F4(b: B); case G4(a: A); case H4(b: B); case I4(a: A); case J4(b: B);
-  case A5(a: A); case B5(b: B); case C5(a: A); case D5(b: B); case E5(a: A); case F5(b: B); case G5(a: A); case H5(b: B); case I5(a: A); case J5(b: B)
-}
-enum CK70[+A] {
-  case A0(a: A); case B0(b: B); case C0(a: A); case D0(b: B); case E0(a: A); case F0(b: B); case G0(a: A); case H0(b: B); case I0(a: A); case J0(b: B);
-  case A1(a: A); case B1(b: B); case C1(a: A); case D1(b: B); case E1(a: A); case F1(b: B); case G1(a: A); case H1(b: B); case I1(a: A); case J1(b: B);
-  case A2(a: A); case B2(b: B); case C2(a: A); case D2(b: B); case E2(a: A); case F2(b: B); case G2(a: A); case H2(b: B); case I2(a: A); case J2(b: B);
-  case A3(a: A); case B3(b: B); case C3(a: A); case D3(b: B); case E3(a: A); case F3(b: B); case G3(a: A); case H3(b: B); case I3(a: A); case J3(b: B);
-  case A4(a: A); case B4(b: B); case C4(a: A); case D4(b: B); case E4(a: A); case F4(b: B); case G4(a: A); case H4(b: B); case I4(a: A); case J4(b: B);
-  case A5(a: A); case B5(b: B); case C5(a: A); case D5(b: B); case E5(a: A); case F5(b: B); case G5(a: A); case H5(b: B); case I5(a: A); case J5(b: B);
-  case A6(a: A); case B6(b: B); case C6(a: A); case D6(b: B); case E6(a: A); case F6(b: B); case G6(a: A); case H6(b: B); case I6(a: A); case J6(b: B)
-}
-enum CK80[+A] {
-  case A0(a: A); case B0(b: B); case C0(a: A); case D0(b: B); case E0(a: A); case F0(b: B); case G0(a: A); case H0(b: B); case I0(a: A); case J0(b: B);
-  case A1(a: A); case B1(b: B); case C1(a: A); case D1(b: B); case E1(a: A); case F1(b: B); case G1(a: A); case H1(b: B); case I1(a: A); case J1(b: B);
-  case A2(a: A); case B2(b: B); case C2(a: A); case D2(b: B); case E2(a: A); case F2(b: B); case G2(a: A); case H2(b: B); case I2(a: A); case J2(b: B);
-  case A3(a: A); case B3(b: B); case C3(a: A); case D3(b: B); case E3(a: A); case F3(b: B); case G3(a: A); case H3(b: B); case I3(a: A); case J3(b: B);
-  case A4(a: A); case B4(b: B); case C4(a: A); case D4(b: B); case E4(a: A); case F4(b: B); case G4(a: A); case H4(b: B); case I4(a: A); case J4(b: B);
-  case A5(a: A); case B5(b: B); case C5(a: A); case D5(b: B); case E5(a: A); case F5(b: B); case G5(a: A); case H5(b: B); case I5(a: A); case J5(b: B);
-  case A6(a: A); case B6(b: B); case C6(a: A); case D6(b: B); case E6(a: A); case F6(b: B); case G6(a: A); case H6(b: B); case I6(a: A); case J6(b: B);
-  case A7(a: A); case B7(b: B); case C7(a: A); case D7(b: B); case E7(a: A); case F7(b: B); case G7(a: A); case H7(b: B); case I7(a: A); case J7(b: B)
-}
-enum CK90[+A] {
-  case A0(a: A); case B0(b: B); case C0(a: A); case D0(b: B); case E0(a: A); case F0(b: B); case G0(a: A); case H0(b: B); case I0(a: A); case J0(b: B);
-  case A1(a: A); case B1(b: B); case C1(a: A); case D1(b: B); case E1(a: A); case F1(b: B); case G1(a: A); case H1(b: B); case I1(a: A); case J1(b: B);
-  case A2(a: A); case B2(b: B); case C2(a: A); case D2(b: B); case E2(a: A); case F2(b: B); case G2(a: A); case H2(b: B); case I2(a: A); case J2(b: B);
-  case A3(a: A); case B3(b: B); case C3(a: A); case D3(b: B); case E3(a: A); case F3(b: B); case G3(a: A); case H3(b: B); case I3(a: A); case J3(b: B);
-  case A4(a: A); case B4(b: B); case C4(a: A); case D4(b: B); case E4(a: A); case F4(b: B); case G4(a: A); case H4(b: B); case I4(a: A); case J4(b: B);
-  case A5(a: A); case B5(b: B); case C5(a: A); case D5(b: B); case E5(a: A); case F5(b: B); case G5(a: A); case H5(b: B); case I5(a: A); case J5(b: B);
-  case A6(a: A); case B6(b: B); case C6(a: A); case D6(b: B); case E6(a: A); case F6(b: B); case G6(a: A); case H6(b: B); case I6(a: A); case J6(b: B);
-  case A7(a: A); case B7(b: B); case C7(a: A); case D7(b: B); case E7(a: A); case F7(b: B); case G7(a: A); case H7(b: B); case I7(a: A); case J7(b: B);
-  case A8(a: A); case B8(b: B); case C8(a: A); case D8(b: B); case E8(a: A); case F8(b: B); case G8(a: A); case H8(b: B); case I8(a: A); case J8(b: B)
-}
-enum CK100[+A] {
-  case A0(a: A); case B0(b: B); case C0(a: A); case D0(b: B); case E0(a: A); case F0(b: B); case G0(a: A); case H0(b: B); case I0(a: A); case J0(b: B);
-  case A1(a: A); case B1(b: B); case C1(a: A); case D1(b: B); case E1(a: A); case F1(b: B); case G1(a: A); case H1(b: B); case I1(a: A); case J1(b: B);
-  case A2(a: A); case B2(b: B); case C2(a: A); case D2(b: B); case E2(a: A); case F2(b: B); case G2(a: A); case H2(b: B); case I2(a: A); case J2(b: B);
-  case A3(a: A); case B3(b: B); case C3(a: A); case D3(b: B); case E3(a: A); case F3(b: B); case G3(a: A); case H3(b: B); case I3(a: A); case J3(b: B);
-  case A4(a: A); case B4(b: B); case C4(a: A); case D4(b: B); case E4(a: A); case F4(b: B); case G4(a: A); case H4(b: B); case I4(a: A); case J4(b: B);
-  case A5(a: A); case B5(b: B); case C5(a: A); case D5(b: B); case E5(a: A); case F5(b: B); case G5(a: A); case H5(b: B); case I5(a: A); case J5(b: B);
-  case A6(a: A); case B6(b: B); case C6(a: A); case D6(b: B); case E6(a: A); case F6(b: B); case G6(a: A); case H6(b: B); case I6(a: A); case J6(b: B);
-  case A7(a: A); case B7(b: B); case C7(a: A); case D7(b: B); case E7(a: A); case F7(b: B); case G7(a: A); case H7(b: B); case I7(a: A); case J7(b: B);
-  case A8(a: A); case B8(b: B); case C8(a: A); case D8(b: B); case E8(a: A); case F8(b: B); case G8(a: A); case H8(b: B); case I8(a: A); case J8(b: B);
-  case A9(a: A); case B9(b: B); case C9(a: A); case D9(b: B); case E9(a: A); case F9(b: B); case G9(a: A); case H9(b: B); case I9(a: A); case J9(b: B)
-}
+object CK0
+sealed trait CK10[+A]
+object CK10
+  case class CK10_A0[A](a: A) extends CK10[A]; case class CK10_B0(b: B) extends CK10[Nothing]; case class CK10_C0[A](a: A) extends CK10[A]; case class CK10_D0(b: B) extends CK10[Nothing]; case class CK10_E0[A](a: A) extends CK10[A]; case class CK10_F0(b: B) extends CK10[Nothing]; case class CK10_G0[A](a: A) extends CK10[A]; case class CK10_H0(b: B) extends CK10[Nothing]; case class CK10_I0[A](a: A) extends CK10[A]; case class CK10_J0(b: B) extends CK10[Nothing];
+
+sealed trait CK20[+A]
+object CK20
+  case class CK20_A0[A](a: A) extends CK20[A]; case class CK20_B0(b: B) extends CK20[Nothing]; case class CK20_C0[A](a: A) extends CK20[A]; case class CK20_D0(b: B) extends CK20[Nothing]; case class CK20_E0[A](a: A) extends CK20[A]; case class CK20_F0(b: B) extends CK20[Nothing]; case class CK20_G0[A](a: A) extends CK20[A]; case class CK20_H0(b: B) extends CK20[Nothing]; case class CK20_I0[A](a: A) extends CK20[A]; case class CK20_J0(b: B) extends CK20[Nothing];
+  case class CK20_A1[A](a: A) extends CK20[A]; case class CK20_B1(b: B) extends CK20[Nothing]; case class CK20_C1[A](a: A) extends CK20[A]; case class CK20_D1(b: B) extends CK20[Nothing]; case class CK20_E1[A](a: A) extends CK20[A]; case class CK20_F1(b: B) extends CK20[Nothing]; case class CK20_G1[A](a: A) extends CK20[A]; case class CK20_H1(b: B) extends CK20[Nothing]; case class CK20_I1[A](a: A) extends CK20[A]; case class CK20_J1(b: B) extends CK20[Nothing]
+
+sealed trait CK30[+A]
+object CK30
+  case class CK30_A0[A](a: A) extends CK30[A]; case class CK30_B0(b: B) extends CK30[Nothing]; case class CK30_C0[A](a: A) extends CK30[A]; case class CK30_D0(b: B) extends CK30[Nothing]; case class CK30_E0[A](a: A) extends CK30[A]; case class CK30_F0(b: B) extends CK30[Nothing]; case class CK30_G0[A](a: A) extends CK30[A]; case class CK30_H0(b: B) extends CK30[Nothing]; case class CK30_I0[A](a: A) extends CK30[A]; case class CK30_J0(b: B) extends CK30[Nothing];
+  case class CK30_A1[A](a: A) extends CK30[A]; case class CK30_B1(b: B) extends CK30[Nothing]; case class CK30_C1[A](a: A) extends CK30[A]; case class CK30_D1(b: B) extends CK30[Nothing]; case class CK30_E1[A](a: A) extends CK30[A]; case class CK30_F1(b: B) extends CK30[Nothing]; case class CK30_G1[A](a: A) extends CK30[A]; case class CK30_H1(b: B) extends CK30[Nothing]; case class CK30_I1[A](a: A) extends CK30[A]; case class CK30_J1(b: B) extends CK30[Nothing];
+  case class CK30_A2[A](a: A) extends CK30[A]; case class CK30_B2(b: B) extends CK30[Nothing]; case class CK30_C2[A](a: A) extends CK30[A]; case class CK30_D2(b: B) extends CK30[Nothing]; case class CK30_E2[A](a: A) extends CK30[A]; case class CK30_F2(b: B) extends CK30[Nothing]; case class CK30_G2[A](a: A) extends CK30[A]; case class CK30_H2(b: B) extends CK30[Nothing]; case class CK30_I2[A](a: A) extends CK30[A]; case class CK30_J2(b: B) extends CK30[Nothing]
+
+sealed trait CK40[+A]
+object CK40
+  case class CK40_A0[A](a: A) extends CK40[A]; case class CK40_B0(b: B) extends CK40[Nothing]; case class CK40_C0[A](a: A) extends CK40[A]; case class CK40_D0(b: B) extends CK40[Nothing]; case class CK40_E0[A](a: A) extends CK40[A]; case class CK40_F0(b: B) extends CK40[Nothing]; case class CK40_G0[A](a: A) extends CK40[A]; case class CK40_H0(b: B) extends CK40[Nothing]; case class CK40_I0[A](a: A) extends CK40[A]; case class CK40_J0(b: B) extends CK40[Nothing];
+  case class CK40_A1[A](a: A) extends CK40[A]; case class CK40_B1(b: B) extends CK40[Nothing]; case class CK40_C1[A](a: A) extends CK40[A]; case class CK40_D1(b: B) extends CK40[Nothing]; case class CK40_E1[A](a: A) extends CK40[A]; case class CK40_F1(b: B) extends CK40[Nothing]; case class CK40_G1[A](a: A) extends CK40[A]; case class CK40_H1(b: B) extends CK40[Nothing]; case class CK40_I1[A](a: A) extends CK40[A]; case class CK40_J1(b: B) extends CK40[Nothing];
+  case class CK40_A2[A](a: A) extends CK40[A]; case class CK40_B2(b: B) extends CK40[Nothing]; case class CK40_C2[A](a: A) extends CK40[A]; case class CK40_D2(b: B) extends CK40[Nothing]; case class CK40_E2[A](a: A) extends CK40[A]; case class CK40_F2(b: B) extends CK40[Nothing]; case class CK40_G2[A](a: A) extends CK40[A]; case class CK40_H2(b: B) extends CK40[Nothing]; case class CK40_I2[A](a: A) extends CK40[A]; case class CK40_J2(b: B) extends CK40[Nothing];
+  case class CK40_A3[A](a: A) extends CK40[A]; case class CK40_B3(b: B) extends CK40[Nothing]; case class CK40_C3[A](a: A) extends CK40[A]; case class CK40_D3(b: B) extends CK40[Nothing]; case class CK40_E3[A](a: A) extends CK40[A]; case class CK40_F3(b: B) extends CK40[Nothing]; case class CK40_G3[A](a: A) extends CK40[A]; case class CK40_H3(b: B) extends CK40[Nothing]; case class CK40_I3[A](a: A) extends CK40[A]; case class CK40_J3(b: B) extends CK40[Nothing]
+
+sealed trait CK50[+A]
+object CK50
+  case class CK50_A0[A](a: A) extends CK50[A]; case class CK50_B0(b: B) extends CK50[Nothing]; case class CK50_C0[A](a: A) extends CK50[A]; case class CK50_D0(b: B) extends CK50[Nothing]; case class CK50_E0[A](a: A) extends CK50[A]; case class CK50_F0(b: B) extends CK50[Nothing]; case class CK50_G0[A](a: A) extends CK50[A]; case class CK50_H0(b: B) extends CK50[Nothing]; case class CK50_I0[A](a: A) extends CK50[A]; case class CK50_J0(b: B) extends CK50[Nothing];
+  case class CK50_A1[A](a: A) extends CK50[A]; case class CK50_B1(b: B) extends CK50[Nothing]; case class CK50_C1[A](a: A) extends CK50[A]; case class CK50_D1(b: B) extends CK50[Nothing]; case class CK50_E1[A](a: A) extends CK50[A]; case class CK50_F1(b: B) extends CK50[Nothing]; case class CK50_G1[A](a: A) extends CK50[A]; case class CK50_H1(b: B) extends CK50[Nothing]; case class CK50_I1[A](a: A) extends CK50[A]; case class CK50_J1(b: B) extends CK50[Nothing];
+  case class CK50_A2[A](a: A) extends CK50[A]; case class CK50_B2(b: B) extends CK50[Nothing]; case class CK50_C2[A](a: A) extends CK50[A]; case class CK50_D2(b: B) extends CK50[Nothing]; case class CK50_E2[A](a: A) extends CK50[A]; case class CK50_F2(b: B) extends CK50[Nothing]; case class CK50_G2[A](a: A) extends CK50[A]; case class CK50_H2(b: B) extends CK50[Nothing]; case class CK50_I2[A](a: A) extends CK50[A]; case class CK50_J2(b: B) extends CK50[Nothing];
+  case class CK50_A3[A](a: A) extends CK50[A]; case class CK50_B3(b: B) extends CK50[Nothing]; case class CK50_C3[A](a: A) extends CK50[A]; case class CK50_D3(b: B) extends CK50[Nothing]; case class CK50_E3[A](a: A) extends CK50[A]; case class CK50_F3(b: B) extends CK50[Nothing]; case class CK50_G3[A](a: A) extends CK50[A]; case class CK50_H3(b: B) extends CK50[Nothing]; case class CK50_I3[A](a: A) extends CK50[A]; case class CK50_J3(b: B) extends CK50[Nothing];
+  case class CK50_A4[A](a: A) extends CK50[A]; case class CK50_B4(b: B) extends CK50[Nothing]; case class CK50_C4[A](a: A) extends CK50[A]; case class CK50_D4(b: B) extends CK50[Nothing]; case class CK50_E4[A](a: A) extends CK50[A]; case class CK50_F4(b: B) extends CK50[Nothing]; case class CK50_G4[A](a: A) extends CK50[A]; case class CK50_H4(b: B) extends CK50[Nothing]; case class CK50_I4[A](a: A) extends CK50[A]; case class CK50_J4(b: B) extends CK50[Nothing]
+
+sealed trait CK60[+A]
+object CK60
+  case class CK60_A0[A](a: A) extends CK60[A]; case class CK60_B0(b: B) extends CK60[Nothing]; case class CK60_C0[A](a: A) extends CK60[A]; case class CK60_D0(b: B) extends CK60[Nothing]; case class CK60_E0[A](a: A) extends CK60[A]; case class CK60_F0(b: B) extends CK60[Nothing]; case class CK60_G0[A](a: A) extends CK60[A]; case class CK60_H0(b: B) extends CK60[Nothing]; case class CK60_I0[A](a: A) extends CK60[A]; case class CK60_J0(b: B) extends CK60[Nothing];
+  case class CK60_A1[A](a: A) extends CK60[A]; case class CK60_B1(b: B) extends CK60[Nothing]; case class CK60_C1[A](a: A) extends CK60[A]; case class CK60_D1(b: B) extends CK60[Nothing]; case class CK60_E1[A](a: A) extends CK60[A]; case class CK60_F1(b: B) extends CK60[Nothing]; case class CK60_G1[A](a: A) extends CK60[A]; case class CK60_H1(b: B) extends CK60[Nothing]; case class CK60_I1[A](a: A) extends CK60[A]; case class CK60_J1(b: B) extends CK60[Nothing];
+  case class CK60_A2[A](a: A) extends CK60[A]; case class CK60_B2(b: B) extends CK60[Nothing]; case class CK60_C2[A](a: A) extends CK60[A]; case class CK60_D2(b: B) extends CK60[Nothing]; case class CK60_E2[A](a: A) extends CK60[A]; case class CK60_F2(b: B) extends CK60[Nothing]; case class CK60_G2[A](a: A) extends CK60[A]; case class CK60_H2(b: B) extends CK60[Nothing]; case class CK60_I2[A](a: A) extends CK60[A]; case class CK60_J2(b: B) extends CK60[Nothing];
+  case class CK60_A3[A](a: A) extends CK60[A]; case class CK60_B3(b: B) extends CK60[Nothing]; case class CK60_C3[A](a: A) extends CK60[A]; case class CK60_D3(b: B) extends CK60[Nothing]; case class CK60_E3[A](a: A) extends CK60[A]; case class CK60_F3(b: B) extends CK60[Nothing]; case class CK60_G3[A](a: A) extends CK60[A]; case class CK60_H3(b: B) extends CK60[Nothing]; case class CK60_I3[A](a: A) extends CK60[A]; case class CK60_J3(b: B) extends CK60[Nothing];
+  case class CK60_A4[A](a: A) extends CK60[A]; case class CK60_B4(b: B) extends CK60[Nothing]; case class CK60_C4[A](a: A) extends CK60[A]; case class CK60_D4(b: B) extends CK60[Nothing]; case class CK60_E4[A](a: A) extends CK60[A]; case class CK60_F4(b: B) extends CK60[Nothing]; case class CK60_G4[A](a: A) extends CK60[A]; case class CK60_H4(b: B) extends CK60[Nothing]; case class CK60_I4[A](a: A) extends CK60[A]; case class CK60_J4(b: B) extends CK60[Nothing];
+  case class CK60_A5[A](a: A) extends CK60[A]; case class CK60_B5(b: B) extends CK60[Nothing]; case class CK60_C5[A](a: A) extends CK60[A]; case class CK60_D5(b: B) extends CK60[Nothing]; case class CK60_E5[A](a: A) extends CK60[A]; case class CK60_F5(b: B) extends CK60[Nothing]; case class CK60_G5[A](a: A) extends CK60[A]; case class CK60_H5(b: B) extends CK60[Nothing]; case class CK60_I5[A](a: A) extends CK60[A]; case class CK60_J5(b: B) extends CK60[Nothing]
+
+sealed trait CK70[+A]
+object CK70
+  case class CK70_A0[A](a: A) extends CK70[A]; case class CK70_B0(b: B) extends CK70[Nothing]; case class CK70_C0[A](a: A) extends CK70[A]; case class CK70_D0(b: B) extends CK70[Nothing]; case class CK70_E0[A](a: A) extends CK70[A]; case class CK70_F0(b: B) extends CK70[Nothing]; case class CK70_G0[A](a: A) extends CK70[A]; case class CK70_H0(b: B) extends CK70[Nothing]; case class CK70_I0[A](a: A) extends CK70[A]; case class CK70_J0(b: B) extends CK70[Nothing];
+  case class CK70_A1[A](a: A) extends CK70[A]; case class CK70_B1(b: B) extends CK70[Nothing]; case class CK70_C1[A](a: A) extends CK70[A]; case class CK70_D1(b: B) extends CK70[Nothing]; case class CK70_E1[A](a: A) extends CK70[A]; case class CK70_F1(b: B) extends CK70[Nothing]; case class CK70_G1[A](a: A) extends CK70[A]; case class CK70_H1(b: B) extends CK70[Nothing]; case class CK70_I1[A](a: A) extends CK70[A]; case class CK70_J1(b: B) extends CK70[Nothing];
+  case class CK70_A2[A](a: A) extends CK70[A]; case class CK70_B2(b: B) extends CK70[Nothing]; case class CK70_C2[A](a: A) extends CK70[A]; case class CK70_D2(b: B) extends CK70[Nothing]; case class CK70_E2[A](a: A) extends CK70[A]; case class CK70_F2(b: B) extends CK70[Nothing]; case class CK70_G2[A](a: A) extends CK70[A]; case class CK70_H2(b: B) extends CK70[Nothing]; case class CK70_I2[A](a: A) extends CK70[A]; case class CK70_J2(b: B) extends CK70[Nothing];
+  case class CK70_A3[A](a: A) extends CK70[A]; case class CK70_B3(b: B) extends CK70[Nothing]; case class CK70_C3[A](a: A) extends CK70[A]; case class CK70_D3(b: B) extends CK70[Nothing]; case class CK70_E3[A](a: A) extends CK70[A]; case class CK70_F3(b: B) extends CK70[Nothing]; case class CK70_G3[A](a: A) extends CK70[A]; case class CK70_H3(b: B) extends CK70[Nothing]; case class CK70_I3[A](a: A) extends CK70[A]; case class CK70_J3(b: B) extends CK70[Nothing];
+  case class CK70_A4[A](a: A) extends CK70[A]; case class CK70_B4(b: B) extends CK70[Nothing]; case class CK70_C4[A](a: A) extends CK70[A]; case class CK70_D4(b: B) extends CK70[Nothing]; case class CK70_E4[A](a: A) extends CK70[A]; case class CK70_F4(b: B) extends CK70[Nothing]; case class CK70_G4[A](a: A) extends CK70[A]; case class CK70_H4(b: B) extends CK70[Nothing]; case class CK70_I4[A](a: A) extends CK70[A]; case class CK70_J4(b: B) extends CK70[Nothing];
+  case class CK70_A5[A](a: A) extends CK70[A]; case class CK70_B5(b: B) extends CK70[Nothing]; case class CK70_C5[A](a: A) extends CK70[A]; case class CK70_D5(b: B) extends CK70[Nothing]; case class CK70_E5[A](a: A) extends CK70[A]; case class CK70_F5(b: B) extends CK70[Nothing]; case class CK70_G5[A](a: A) extends CK70[A]; case class CK70_H5(b: B) extends CK70[Nothing]; case class CK70_I5[A](a: A) extends CK70[A]; case class CK70_J5(b: B) extends CK70[Nothing];
+  case class CK70_A6[A](a: A) extends CK70[A]; case class CK70_B6(b: B) extends CK70[Nothing]; case class CK70_C6[A](a: A) extends CK70[A]; case class CK70_D6(b: B) extends CK70[Nothing]; case class CK70_E6[A](a: A) extends CK70[A]; case class CK70_F6(b: B) extends CK70[Nothing]; case class CK70_G6[A](a: A) extends CK70[A]; case class CK70_H6(b: B) extends CK70[Nothing]; case class CK70_I6[A](a: A) extends CK70[A]; case class CK70_J6(b: B) extends CK70[Nothing]
+
+sealed trait CK80[+A]
+object CK80
+  case class CK80_A0[A](a: A) extends CK80[A]; case class CK80_B0(b: B) extends CK80[Nothing]; case class CK80_C0[A](a: A) extends CK80[A]; case class CK80_D0(b: B) extends CK80[Nothing]; case class CK80_E0[A](a: A) extends CK80[A]; case class CK80_F0(b: B) extends CK80[Nothing]; case class CK80_G0[A](a: A) extends CK80[A]; case class CK80_H0(b: B) extends CK80[Nothing]; case class CK80_I0[A](a: A) extends CK80[A]; case class CK80_J0(b: B) extends CK80[Nothing];
+  case class CK80_A1[A](a: A) extends CK80[A]; case class CK80_B1(b: B) extends CK80[Nothing]; case class CK80_C1[A](a: A) extends CK80[A]; case class CK80_D1(b: B) extends CK80[Nothing]; case class CK80_E1[A](a: A) extends CK80[A]; case class CK80_F1(b: B) extends CK80[Nothing]; case class CK80_G1[A](a: A) extends CK80[A]; case class CK80_H1(b: B) extends CK80[Nothing]; case class CK80_I1[A](a: A) extends CK80[A]; case class CK80_J1(b: B) extends CK80[Nothing];
+  case class CK80_A2[A](a: A) extends CK80[A]; case class CK80_B2(b: B) extends CK80[Nothing]; case class CK80_C2[A](a: A) extends CK80[A]; case class CK80_D2(b: B) extends CK80[Nothing]; case class CK80_E2[A](a: A) extends CK80[A]; case class CK80_F2(b: B) extends CK80[Nothing]; case class CK80_G2[A](a: A) extends CK80[A]; case class CK80_H2(b: B) extends CK80[Nothing]; case class CK80_I2[A](a: A) extends CK80[A]; case class CK80_J2(b: B) extends CK80[Nothing];
+  case class CK80_A3[A](a: A) extends CK80[A]; case class CK80_B3(b: B) extends CK80[Nothing]; case class CK80_C3[A](a: A) extends CK80[A]; case class CK80_D3(b: B) extends CK80[Nothing]; case class CK80_E3[A](a: A) extends CK80[A]; case class CK80_F3(b: B) extends CK80[Nothing]; case class CK80_G3[A](a: A) extends CK80[A]; case class CK80_H3(b: B) extends CK80[Nothing]; case class CK80_I3[A](a: A) extends CK80[A]; case class CK80_J3(b: B) extends CK80[Nothing];
+  case class CK80_A4[A](a: A) extends CK80[A]; case class CK80_B4(b: B) extends CK80[Nothing]; case class CK80_C4[A](a: A) extends CK80[A]; case class CK80_D4(b: B) extends CK80[Nothing]; case class CK80_E4[A](a: A) extends CK80[A]; case class CK80_F4(b: B) extends CK80[Nothing]; case class CK80_G4[A](a: A) extends CK80[A]; case class CK80_H4(b: B) extends CK80[Nothing]; case class CK80_I4[A](a: A) extends CK80[A]; case class CK80_J4(b: B) extends CK80[Nothing];
+  case class CK80_A5[A](a: A) extends CK80[A]; case class CK80_B5(b: B) extends CK80[Nothing]; case class CK80_C5[A](a: A) extends CK80[A]; case class CK80_D5(b: B) extends CK80[Nothing]; case class CK80_E5[A](a: A) extends CK80[A]; case class CK80_F5(b: B) extends CK80[Nothing]; case class CK80_G5[A](a: A) extends CK80[A]; case class CK80_H5(b: B) extends CK80[Nothing]; case class CK80_I5[A](a: A) extends CK80[A]; case class CK80_J5(b: B) extends CK80[Nothing];
+  case class CK80_A6[A](a: A) extends CK80[A]; case class CK80_B6(b: B) extends CK80[Nothing]; case class CK80_C6[A](a: A) extends CK80[A]; case class CK80_D6(b: B) extends CK80[Nothing]; case class CK80_E6[A](a: A) extends CK80[A]; case class CK80_F6(b: B) extends CK80[Nothing]; case class CK80_G6[A](a: A) extends CK80[A]; case class CK80_H6(b: B) extends CK80[Nothing]; case class CK80_I6[A](a: A) extends CK80[A]; case class CK80_J6(b: B) extends CK80[Nothing];
+  case class CK80_A7[A](a: A) extends CK80[A]; case class CK80_B7(b: B) extends CK80[Nothing]; case class CK80_C7[A](a: A) extends CK80[A]; case class CK80_D7(b: B) extends CK80[Nothing]; case class CK80_E7[A](a: A) extends CK80[A]; case class CK80_F7(b: B) extends CK80[Nothing]; case class CK80_G7[A](a: A) extends CK80[A]; case class CK80_H7(b: B) extends CK80[Nothing]; case class CK80_I7[A](a: A) extends CK80[A]; case class CK80_J7(b: B) extends CK80[Nothing]
+
+sealed trait CK90[+A]
+object CK90
+  case class CK90_A0[A](a: A) extends CK90[A]; case class CK90_B0(b: B) extends CK90[Nothing]; case class CK90_C0[A](a: A) extends CK90[A]; case class CK90_D0(b: B) extends CK90[Nothing]; case class CK90_E0[A](a: A) extends CK90[A]; case class CK90_F0(b: B) extends CK90[Nothing]; case class CK90_G0[A](a: A) extends CK90[A]; case class CK90_H0(b: B) extends CK90[Nothing]; case class CK90_I0[A](a: A) extends CK90[A]; case class CK90_J0(b: B) extends CK90[Nothing];
+  case class CK90_A1[A](a: A) extends CK90[A]; case class CK90_B1(b: B) extends CK90[Nothing]; case class CK90_C1[A](a: A) extends CK90[A]; case class CK90_D1(b: B) extends CK90[Nothing]; case class CK90_E1[A](a: A) extends CK90[A]; case class CK90_F1(b: B) extends CK90[Nothing]; case class CK90_G1[A](a: A) extends CK90[A]; case class CK90_H1(b: B) extends CK90[Nothing]; case class CK90_I1[A](a: A) extends CK90[A]; case class CK90_J1(b: B) extends CK90[Nothing];
+  case class CK90_A2[A](a: A) extends CK90[A]; case class CK90_B2(b: B) extends CK90[Nothing]; case class CK90_C2[A](a: A) extends CK90[A]; case class CK90_D2(b: B) extends CK90[Nothing]; case class CK90_E2[A](a: A) extends CK90[A]; case class CK90_F2(b: B) extends CK90[Nothing]; case class CK90_G2[A](a: A) extends CK90[A]; case class CK90_H2(b: B) extends CK90[Nothing]; case class CK90_I2[A](a: A) extends CK90[A]; case class CK90_J2(b: B) extends CK90[Nothing];
+  case class CK90_A3[A](a: A) extends CK90[A]; case class CK90_B3(b: B) extends CK90[Nothing]; case class CK90_C3[A](a: A) extends CK90[A]; case class CK90_D3(b: B) extends CK90[Nothing]; case class CK90_E3[A](a: A) extends CK90[A]; case class CK90_F3(b: B) extends CK90[Nothing]; case class CK90_G3[A](a: A) extends CK90[A]; case class CK90_H3(b: B) extends CK90[Nothing]; case class CK90_I3[A](a: A) extends CK90[A]; case class CK90_J3(b: B) extends CK90[Nothing];
+  case class CK90_A4[A](a: A) extends CK90[A]; case class CK90_B4(b: B) extends CK90[Nothing]; case class CK90_C4[A](a: A) extends CK90[A]; case class CK90_D4(b: B) extends CK90[Nothing]; case class CK90_E4[A](a: A) extends CK90[A]; case class CK90_F4(b: B) extends CK90[Nothing]; case class CK90_G4[A](a: A) extends CK90[A]; case class CK90_H4(b: B) extends CK90[Nothing]; case class CK90_I4[A](a: A) extends CK90[A]; case class CK90_J4(b: B) extends CK90[Nothing];
+  case class CK90_A5[A](a: A) extends CK90[A]; case class CK90_B5(b: B) extends CK90[Nothing]; case class CK90_C5[A](a: A) extends CK90[A]; case class CK90_D5(b: B) extends CK90[Nothing]; case class CK90_E5[A](a: A) extends CK90[A]; case class CK90_F5(b: B) extends CK90[Nothing]; case class CK90_G5[A](a: A) extends CK90[A]; case class CK90_H5(b: B) extends CK90[Nothing]; case class CK90_I5[A](a: A) extends CK90[A]; case class CK90_J5(b: B) extends CK90[Nothing];
+  case class CK90_A6[A](a: A) extends CK90[A]; case class CK90_B6(b: B) extends CK90[Nothing]; case class CK90_C6[A](a: A) extends CK90[A]; case class CK90_D6(b: B) extends CK90[Nothing]; case class CK90_E6[A](a: A) extends CK90[A]; case class CK90_F6(b: B) extends CK90[Nothing]; case class CK90_G6[A](a: A) extends CK90[A]; case class CK90_H6(b: B) extends CK90[Nothing]; case class CK90_I6[A](a: A) extends CK90[A]; case class CK90_J6(b: B) extends CK90[Nothing];
+  case class CK90_A7[A](a: A) extends CK90[A]; case class CK90_B7(b: B) extends CK90[Nothing]; case class CK90_C7[A](a: A) extends CK90[A]; case class CK90_D7(b: B) extends CK90[Nothing]; case class CK90_E7[A](a: A) extends CK90[A]; case class CK90_F7(b: B) extends CK90[Nothing]; case class CK90_G7[A](a: A) extends CK90[A]; case class CK90_H7(b: B) extends CK90[Nothing]; case class CK90_I7[A](a: A) extends CK90[A]; case class CK90_J7(b: B) extends CK90[Nothing];
+  case class CK90_A8[A](a: A) extends CK90[A]; case class CK90_B8(b: B) extends CK90[Nothing]; case class CK90_C8[A](a: A) extends CK90[A]; case class CK90_D8(b: B) extends CK90[Nothing]; case class CK90_E8[A](a: A) extends CK90[A]; case class CK90_F8(b: B) extends CK90[Nothing]; case class CK90_G8[A](a: A) extends CK90[A]; case class CK90_H8(b: B) extends CK90[Nothing]; case class CK90_I8[A](a: A) extends CK90[A]; case class CK90_J8(b: B) extends CK90[Nothing]
+
+sealed trait CK100[+A]
+object CK100
+  case class CK100_A0[A](a: A) extends CK100[A]; case class CK100_B0(b: B) extends CK100[Nothing]; case class CK100_C0[A](a: A) extends CK100[A]; case class CK100_D0(b: B) extends CK100[Nothing]; case class CK100_E0[A](a: A) extends CK100[A]; case class CK100_F0(b: B) extends CK100[Nothing]; case class CK100_G0[A](a: A) extends CK100[A]; case class CK100_H0(b: B) extends CK100[Nothing]; case class CK100_I0[A](a: A) extends CK100[A]; case class CK100_J0(b: B) extends CK100[Nothing];
+  case class CK100_A1[A](a: A) extends CK100[A]; case class CK100_B1(b: B) extends CK100[Nothing]; case class CK100_C1[A](a: A) extends CK100[A]; case class CK100_D1(b: B) extends CK100[Nothing]; case class CK100_E1[A](a: A) extends CK100[A]; case class CK100_F1(b: B) extends CK100[Nothing]; case class CK100_G1[A](a: A) extends CK100[A]; case class CK100_H1(b: B) extends CK100[Nothing]; case class CK100_I1[A](a: A) extends CK100[A]; case class CK100_J1(b: B) extends CK100[Nothing];
+  case class CK100_A2[A](a: A) extends CK100[A]; case class CK100_B2(b: B) extends CK100[Nothing]; case class CK100_C2[A](a: A) extends CK100[A]; case class CK100_D2(b: B) extends CK100[Nothing]; case class CK100_E2[A](a: A) extends CK100[A]; case class CK100_F2(b: B) extends CK100[Nothing]; case class CK100_G2[A](a: A) extends CK100[A]; case class CK100_H2(b: B) extends CK100[Nothing]; case class CK100_I2[A](a: A) extends CK100[A]; case class CK100_J2(b: B) extends CK100[Nothing];
+  case class CK100_A3[A](a: A) extends CK100[A]; case class CK100_B3(b: B) extends CK100[Nothing]; case class CK100_C3[A](a: A) extends CK100[A]; case class CK100_D3(b: B) extends CK100[Nothing]; case class CK100_E3[A](a: A) extends CK100[A]; case class CK100_F3(b: B) extends CK100[Nothing]; case class CK100_G3[A](a: A) extends CK100[A]; case class CK100_H3(b: B) extends CK100[Nothing]; case class CK100_I3[A](a: A) extends CK100[A]; case class CK100_J3(b: B) extends CK100[Nothing];
+  case class CK100_A4[A](a: A) extends CK100[A]; case class CK100_B4(b: B) extends CK100[Nothing]; case class CK100_C4[A](a: A) extends CK100[A]; case class CK100_D4(b: B) extends CK100[Nothing]; case class CK100_E4[A](a: A) extends CK100[A]; case class CK100_F4(b: B) extends CK100[Nothing]; case class CK100_G4[A](a: A) extends CK100[A]; case class CK100_H4(b: B) extends CK100[Nothing]; case class CK100_I4[A](a: A) extends CK100[A]; case class CK100_J4(b: B) extends CK100[Nothing];
+  case class CK100_A5[A](a: A) extends CK100[A]; case class CK100_B5(b: B) extends CK100[Nothing]; case class CK100_C5[A](a: A) extends CK100[A]; case class CK100_D5(b: B) extends CK100[Nothing]; case class CK100_E5[A](a: A) extends CK100[A]; case class CK100_F5(b: B) extends CK100[Nothing]; case class CK100_G5[A](a: A) extends CK100[A]; case class CK100_H5(b: B) extends CK100[Nothing]; case class CK100_I5[A](a: A) extends CK100[A]; case class CK100_J5(b: B) extends CK100[Nothing];
+  case class CK100_A6[A](a: A) extends CK100[A]; case class CK100_B6(b: B) extends CK100[Nothing]; case class CK100_C6[A](a: A) extends CK100[A]; case class CK100_D6(b: B) extends CK100[Nothing]; case class CK100_E6[A](a: A) extends CK100[A]; case class CK100_F6(b: B) extends CK100[Nothing]; case class CK100_G6[A](a: A) extends CK100[A]; case class CK100_H6(b: B) extends CK100[Nothing]; case class CK100_I6[A](a: A) extends CK100[A]; case class CK100_J6(b: B) extends CK100[Nothing];
+  case class CK100_A7[A](a: A) extends CK100[A]; case class CK100_B7(b: B) extends CK100[Nothing]; case class CK100_C7[A](a: A) extends CK100[A]; case class CK100_D7(b: B) extends CK100[Nothing]; case class CK100_E7[A](a: A) extends CK100[A]; case class CK100_F7(b: B) extends CK100[Nothing]; case class CK100_G7[A](a: A) extends CK100[A]; case class CK100_H7(b: B) extends CK100[Nothing]; case class CK100_I7[A](a: A) extends CK100[A]; case class CK100_J7(b: B) extends CK100[Nothing];
+  case class CK100_A8[A](a: A) extends CK100[A]; case class CK100_B8(b: B) extends CK100[Nothing]; case class CK100_C8[A](a: A) extends CK100[A]; case class CK100_D8(b: B) extends CK100[Nothing]; case class CK100_E8[A](a: A) extends CK100[A]; case class CK100_F8(b: B) extends CK100[Nothing]; case class CK100_G8[A](a: A) extends CK100[A]; case class CK100_H8(b: B) extends CK100[Nothing]; case class CK100_I8[A](a: A) extends CK100[A]; case class CK100_J8(b: B) extends CK100[Nothing];
+  case class CK100_A9[A](a: A) extends CK100[A]; case class CK100_B9(b: B) extends CK100[Nothing]; case class CK100_C9[A](a: A) extends CK100[A]; case class CK100_D9(b: B) extends CK100[Nothing]; case class CK100_E9[A](a: A) extends CK100[A]; case class CK100_F9(b: B) extends CK100[Nothing]; case class CK100_G9[A](a: A) extends CK100[A]; case class CK100_H9(b: B) extends CK100[Nothing]; case class CK100_I9[A](a: A) extends CK100[A]; case class CK100_J9(b: B) extends CK100[Nothing]
+
