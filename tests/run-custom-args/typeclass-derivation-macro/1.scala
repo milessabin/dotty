@@ -521,7 +521,7 @@ object Inlined {
 }
 
 object Staged {
-  type RE[X] = given Reflection => E[X]
+  type RE[X] = given QuoteContext => E[X]
 
   implicit class ListOps[A](l: List[A]) {
     def safeZip[B](o: List[B]): List[(A, B)] = {
@@ -546,8 +546,8 @@ object Staged {
 
     trait StagedProductInstances[F[_], T] extends StagedInstances[F, T] {
       def instances: List[Any]
-      def accessorsE(value: E[T])(implicit r: Reflection): List[E[Any]]
-      def constructorE(fields: List[E[Any]])(implicit r: Reflection): E[T]
+      def accessorsE(value: E[T])(implicit r: QuoteContext): List[E[Any]]
+      def constructorE(fields: List[E[Any]])(implicit r: QuoteContext): E[T]
 
       def foldLeft2E[Acc](x: E[T], y: E[T])(i: E[Acc])(f: [t] => (E[Acc], F[t], E[t], E[t]) => E[Acc]): RE[Acc] =
         accessorsE(x).safeZip(accessorsE(y)).safeZip(instances).foldLeft(i) {
@@ -564,8 +564,8 @@ object Staged {
         ): StagedProductInstances[F, T] = new StagedProductInstances[F, T] {
           def instances: List[Any] = s.instances
 
-          def accessorsE(value: E[T])(implicit r: Reflection): List[E[Any]] = {
-            import r._
+          def accessorsE(value: E[T])(implicit r: QuoteContext): List[E[Any]] = {
+            import r.tasty._
             t.unseal.symbol match {
               case IsClassDefSymbol(self) => // case class
                 self.caseFields.map { field =>
@@ -575,8 +575,8 @@ object Staged {
             }
           }
 
-          def constructorE(fields: List[E[Any]])(implicit r: Reflection): E[T] = {
-            import r._
+          def constructorE(fields: List[E[Any]])(implicit r: QuoteContext): E[T] = {
+            import r.tasty._
             val companion = t.unseal.tpe match {
               case Type.SymRef(sym, prefix)   => Type.TermRef(prefix, sym.name)
               case Type.TypeRef(name, prefix) => Type.TermRef(prefix, name)
@@ -588,8 +588,8 @@ object Staged {
 
     trait StagedCoproductInstances[F[_], T] extends StagedInstances[F, T] {
       def instances: List[Any]
-      def typetestsE(value: E[T])(implicit r: Reflection): List[E[Boolean]]
-      def castsE(value: E[T])(implicit r: Reflection): List[E[Any]]
+      def typetestsE(value: E[T])(implicit r: QuoteContext): List[E[Boolean]]
+      def castsE(value: E[T])(implicit r: QuoteContext): List[E[Any]]
 
       def fold2E[R: Type](x: E[T], y: E[T])(i: E[R])(f: [t] => (F[t], E[t], E[t]) => E[R]): RE[R] =
         typetestsE(x).safeZip(castsE(x)).safeZip(typetestsE(y).safeZip(castsE(y))).safeZip(instances).foldLeft(i) {
@@ -608,10 +608,10 @@ object Staged {
         ): StagedCoproductInstances[F, T] = new StagedCoproductInstances[F, T] {
           def instances: List[Any] = s.instances
 
-          def typetestsE(value: E[T])(implicit r: Reflection): List[E[Boolean]] =
+          def typetestsE(value: E[T])(implicit r: QuoteContext): List[E[Boolean]] =
             x.instances.map { case tpe: Type[_] => '{ $value.isInstanceOf[$tpe] } }
 
-          def castsE(value: E[T])(implicit r: Reflection): List[E[Any]] = {
+          def castsE(value: E[T])(implicit r: QuoteContext): List[E[Any]] = {
             x.instances.map { case tpe: Type[_] => '{ $value.asInstanceOf[$tpe] } }
           }
         }
@@ -669,8 +669,8 @@ object Staged {
 
     trait StagedProductInstances[F[_[_]], T[_]] extends StagedInstances[F, T] {
       def instances: List[Any]
-      def accessorsE[A](value: E[T[A]])(implicit r: Reflection): List[E[Any]]
-      def constructorE[A](fields: List[E[Any]])(implicit r: Reflection): E[T[A]]
+      def accessorsE[A](value: E[T[A]])(implicit r: QuoteContext): List[E[Any]]
+      def constructorE[A](fields: List[E[Any]])(implicit r: QuoteContext): E[T[A]]
 
       def mapE[A, R](x: E[T[A]])(f: [t[_]] => (F[t], E[t[A]]) => E[t[R]]): RE[T[R]] = {
         val args = instances.safeZip(accessorsE(x)).map((in, a) => f(in.asInstanceOf, a.asInstanceOf))
@@ -687,8 +687,8 @@ object Staged {
         ): StagedProductInstances[F, T] = new StagedProductInstances[F, T] {
           def instances: List[Any] = s.instances
 
-          def accessorsE[A](value: E[T[A]])(implicit r: Reflection): List[E[Any]] = {
-            import r._
+          def accessorsE[A](value: E[T[A]])(implicit r: QuoteContext): List[E[Any]] = {
+            import r.tasty._
             t.unseal.symbol match {
               case IsClassDefSymbol(self) =>
                 self.caseFields.map { field =>
@@ -709,8 +709,8 @@ object Staged {
             }
           }
 
-          def constructorE[A](fields: List[E[Any]])(implicit r: Reflection): E[T[A]] = {
-            import r._
+          def constructorE[A](fields: List[E[Any]])(implicit r: QuoteContext): E[T[A]] = {
+            import r.tasty._
             def companion(tpe: Type): TermRef = tpe match {
               case Type.SymRef(sym, prefix)   => Type.TermRef(prefix, sym.name)
               case Type.TypeRef(name, prefix) => Type.TermRef(prefix, name)
@@ -732,8 +732,8 @@ object Staged {
 
     trait StagedCoproductInstances[F[_[_]], T[_]] extends StagedInstances[F, T] {
       def instances: List[Any]
-      def typetestsE[A](value: E[T[A]])(implicit r: Reflection): List[E[Boolean]]
-      def castsE[A](value: E[T[A]])(implicit r: Reflection): List[E[Any]]
+      def typetestsE[A](value: E[T[A]])(implicit r: QuoteContext): List[E[Boolean]]
+      def castsE[A](value: E[T[A]])(implicit r: QuoteContext): List[E[Any]]
 
       def mapE[A, R](x: E[T[A]])(f: [t[_]] => (F[t], E[t[A]]) => E[t[R]]): RE[T[R]] =
         instances.safeZip(typetestsE(x).safeZip(castsE(x))).foldLeft('{ null }) {
@@ -751,16 +751,16 @@ object Staged {
         ): StagedCoproductInstances[F, T] = new StagedCoproductInstances[F, T] {
           def instances: List[Any] = s.instances
 
-          def typetestsE[A](value: E[T[A]])(implicit r: Reflection): List[E[Boolean]] =
+          def typetestsE[A](value: E[T[A]])(implicit r: QuoteContext): List[E[Boolean]] =
             x.instances.map { case tpe: Type[_] =>
               trait DummyK[X]
               val tpe0 = tpe.asInstanceOf[quoted.Type[DummyK]]
               '{ ${ value.asInstanceOf[E[T[Any]]] }.isInstanceOf[$tpe0[Any]] }
             }
 
-          def castsE[A](value: E[T[A]])(implicit r: Reflection): List[E[Any]] =
+          def castsE[A](value: E[T[A]])(implicit r: QuoteContext): List[E[Any]] =
             x.instances.map { case tpe: Type[_] =>
-              import r._
+              import r.tasty._
               tpe.unseal.tpe match {
                 case Type.TypeLambda(_, bound :: Nil, _) =>
                   trait DummyK[X]
@@ -787,7 +787,7 @@ object Staged {
     inline def eqStaged[T](f1: T, f2: T)(implicit inline e: => Eq0[T]): Boolean =
       ${ eqStagedImpl('f1, 'f2)(e) }
 
-    def eqStagedImpl[T](f1: E[T], f2: E[T])(e: Eq0[T])(implicit r: Reflection): E[Boolean] =
+    def eqStagedImpl[T](f1: E[T], f2: E[T])(e: Eq0[T])(implicit r: QuoteContext): E[Boolean] =
       e.eqv(f1, f2)
   }
 
@@ -846,7 +846,7 @@ object Staged {
     inline def mapStaged[F[_], A, B](fa: F[A], f: A => B)(implicit inline e: => Functor0[F]): F[B] =
       ${ mapStagedImpl('fa, 'f)(e) }
 
-    def mapStagedImpl[F[_], A: Type, B: Type](fa: E[F[A]], f: E[A => B])(e: Functor0[F])(implicit r: Reflection): E[F[B]] =
+    def mapStagedImpl[F[_], A: Type, B: Type](fa: E[F[A]], f: E[A => B])(e: Functor0[F])(implicit r: QuoteContext): E[F[B]] =
       e.map(fa)(f)
   }
 
