@@ -12,16 +12,21 @@ object Shapeless3 {
   case class Wrap[T](t: T)
 
 
+  type ~>[A[_], B[_]] = [t] => A[t] => B[t]
+
   inline def summon[T] = implicit match {
     case t: T => t
   }
 
-  inline def summonValues[T] <: Tuple = inline erasedValue[T] match {
-    case _: Unit => ()
-    case _: (a *: b) => constValue[a] *: summonValues[b]
-  }
+  inline def summonAsArray[T <: Tuple]: Array[Any] =
+    summonAsArray0[T](0, new Array[Any](constValue[Tuple.Size[T]]))
 
-  // Third party library
+  inline def summonAsArray0[T](i: Int, arr: Array[Any]): Array[Any] = inline erasedValue[T] match {
+    case _: Unit => arr
+    case _: (a *: b) =>
+      arr(i) = summon[a]
+      summonAsArray0[b](i+1, arr)
+  }
 
   sealed trait CompleteOr[T]
   case class Complete[T](t: T) extends CompleteOr[T]
@@ -37,19 +42,71 @@ object Shapeless3 {
     def erasedMap(x: Any)(f: (Any, Any) => Any): Any
   }
 
-  final class ErasedProductInstances[FT](val mirror: Mirror.Product, is0: => Array[Any]) extends ErasedInstances[FT] {
-    lazy val is = is0
+  abstract class ErasedProductInstances[FT] extends ErasedInstances[FT] {
+    def erasedConstruct(f: Any => Any): Any
+    def erasedUnfold(a: Any)(f: (Any, Any) => (Any, Option[Any])): (Any, Option[Any])
+    def erasedMap(x0: Any)(f: (Any, Any) => Any): Any
+    def erasedMap2(x0: Any, y0: Any)(f: (Any, Any, Any) => Any): Any
+    def erasedFoldLeft(x0: Any)(a: Any)(f: (Any, Any, Any) => CompleteOr[Any]): Any
+    def erasedFoldLeft2(x0: Any, y0: Any)(a: Any)(f: (Any, Any, Any, Any) => CompleteOr[Any]): Any
+  }
+
+  final class ErasedProductInstances0[FT](val mirror: Mirror.Product) extends ErasedProductInstances[FT] {
+    def erasedConstruct(f: Any => Any): Any = mirror.fromProduct(None)
+    def erasedUnfold(a: Any)(f: (Any, Any) => (Any, Option[Any])): (Any, Option[Any]) = (a, Some(mirror.fromProduct(None)))
+    def erasedMap(x0: Any)(f: (Any, Any) => Any): Any = x0
+    def erasedMap2(x0: Any, y0: Any)(f: (Any, Any, Any) => Any): Any = x0
+    def erasedFoldLeft(x0: Any)(a: Any)(f: (Any, Any, Any) => CompleteOr[Any]): Any = a
+    def erasedFoldLeft2(x0: Any, y0: Any)(a: Any)(f: (Any, Any, Any, Any) => CompleteOr[Any]): Any = a
+  }
+
+  abstract class ErasedProductInstances1[FT](val mirror: Mirror.Product) extends ErasedProductInstances[FT] {
+    def mkI: Any
+    lazy val i = mkI
 
     inline def toProduct(x: Any): Product = x.asInstanceOf[Product]
 
-    class ArrayProduct(val elems: Array[Any]) extends Product {
-      def canEqual(that: Any): Boolean = true
-      def productElement(n: Int) = elems(n)
-      def productArity = elems.length
-      override def productIterator: Iterator[Any] = elems.iterator
+    final def erasedConstruct(f: Any => Any): Any =
+      mirror.fromProduct(Tuple1(f(i)))
+
+    final def erasedUnfold(a: Any)(f: (Any, Any) => (Any, Option[Any])): (Any, Option[Any]) = {
+      val (acc0, e0) = f(a, i)
+      e0 match {
+        case Some(_) => (acc0, Some(mirror.fromProduct(e0)))
+        case None => (acc0, None)
+      }
     }
 
-    def erasedConstruct(f: Any => Any): Any = {
+    final def erasedMap(x0: Any)(f: (Any, Any) => Any): Any =
+      mirror.fromProduct(Tuple1(f(i, toProduct(x0).productElement(0))))
+
+    final def erasedMap2(x0: Any, y0: Any)(f: (Any, Any, Any) => Any): Any =
+      mirror.fromProduct(Tuple1(f(i, toProduct(x0).productElement(0), toProduct(y0).productElement(0))))
+
+    final def erasedFoldLeft(x0: Any)(a: Any)(f: (Any, Any, Any) => CompleteOr[Any]): Any = {
+      f(a, i, toProduct(x0).productElement(0)) match {
+        case Complete(r) => r
+        case Continue(acc) => acc
+      }
+    }
+
+    final def erasedFoldLeft2(x0: Any, y0: Any)(a: Any)(f: (Any, Any, Any, Any) => CompleteOr[Any]): Any = {
+      f(a, i, toProduct(x0).productElement(0), toProduct(y0).productElement(0)) match {
+        case Complete(r) => r
+        case Continue(acc) => acc
+      }
+    }
+  }
+
+  abstract class ErasedProductInstancesN[FT](val mirror: Mirror.Product) extends ErasedProductInstances[FT] {
+    import ErasedProductInstances.ArrayProduct
+
+    def mkIs: Array[Any]
+    lazy val is = mkIs
+
+    inline def toProduct(x: Any): Product = x.asInstanceOf[Product]
+
+    final def erasedConstruct(f: Any => Any): Any = {
       val n = is.length
       val arr = new Array[Any](n)
       var i = 0
@@ -60,7 +117,7 @@ object Shapeless3 {
       mirror.fromProduct(ArrayProduct(arr))
     }
 
-    def erasedUnfold(a: Any)(f: (Any, Any) => (Any, Option[Any])): (Any, Option[Any]) = {
+    final def erasedUnfold(a: Any)(f: (Any, Any) => (Any, Option[Any])): (Any, Option[Any]) = {
       val n = is.length
       val arr = new Array[Any](n)
       var acc = a
@@ -79,7 +136,7 @@ object Shapeless3 {
       (acc, Some(mirror.fromProduct(ArrayProduct(arr))))
     }
 
-    def erasedMap(x0: Any)(f: (Any, Any) => Any): Any = {
+    final def erasedMap(x0: Any)(f: (Any, Any) => Any): Any = {
       val x = toProduct(x0)
       val n = is.length
       val arr = new Array[Any](n)
@@ -91,7 +148,7 @@ object Shapeless3 {
       mirror.fromProduct(ArrayProduct(arr))
     }
 
-    def erasedMap2(x0: Any, y0: Any)(f: (Any, Any, Any) => Any): Any = {
+    final def erasedMap2(x0: Any, y0: Any)(f: (Any, Any, Any) => Any): Any = {
       val x = toProduct(x0)
       val y = toProduct(y0)
       val n = is.length
@@ -104,7 +161,7 @@ object Shapeless3 {
       mirror.fromProduct(ArrayProduct(arr))
     }
 
-    def erasedFoldLeft(x0: Any)(i: Any)(f: (Any, Any, Any) => CompleteOr[Any]): Any = {
+    final def erasedFoldLeft(x0: Any)(i: Any)(f: (Any, Any, Any) => CompleteOr[Any]): Any = {
       val x = toProduct(x0)
       val n = x.productArity
       @tailrec
@@ -120,7 +177,7 @@ object Shapeless3 {
       loop(0, i)
     }
 
-    def erasedFoldLeft2(x0: Any, y0: Any)(i: Any)(f: (Any, Any, Any, Any) => CompleteOr[Any]): Any = {
+    final def erasedFoldLeft2(x0: Any, y0: Any)(i: Any)(f: (Any, Any, Any, Any) => CompleteOr[Any]): Any = {
       val x = toProduct(x0)
       val y = toProduct(y0)
       val n = x.productArity
@@ -138,8 +195,29 @@ object Shapeless3 {
     }
   }
 
-  final class ErasedCoproductInstances[FT](mirror: Mirror.Sum, is0: => Array[Any]) extends ErasedInstances[FT] {
-    lazy val is = is0
+  object ErasedProductInstances {
+    class ArrayProduct(val elems: Array[Any]) extends Product {
+      def canEqual(that: Any): Boolean = true
+      def productElement(n: Int) = elems(n)
+      def productArity = elems.length
+      override def productIterator: Iterator[Any] = elems.iterator
+    }
+
+    inline def summonOne[T] = inline erasedValue[T] match {
+      case _: Tuple1[a] => summon[a]
+    }
+
+    inline def apply[FT, E <: Tuple](mirror: Mirror.Product) : ErasedProductInstances[FT] =
+      inline erasedValue[Tuple.Size[E]] match {
+        case 0 => new ErasedProductInstances0[FT](mirror)
+        case 1 => new ErasedProductInstances1[FT](mirror) { def mkI = summonOne[E] }
+        case _ => new ErasedProductInstancesN[FT](mirror) { def mkIs = summonAsArray[E] }
+      }
+  }
+
+  abstract class ErasedCoproductInstances[FT](mirror: Mirror.Sum) extends ErasedInstances[FT] {
+    def mkIs: Array[Any]
+    lazy val is = mkIs
 
     def ordinal(x: Any): Any = is(mirror.ordinal(x.asInstanceOf))
 
@@ -164,22 +242,29 @@ object Shapeless3 {
     }
   }
 
+  object ErasedCoproductInstances {
+    inline def apply[FT, E <: Tuple](mirror: Mirror.Sum) : ErasedCoproductInstances[FT] =
+      new ErasedCoproductInstances[FT](mirror) {
+        def mkIs = summonAsArray[E]
+      }
+  }
+
   object K0 {
     type Generic[O] = Mirror { type MirroredType = O ; type MirroredElemTypes }
     type ProductGeneric[O] = Mirror.Product { type MirroredType = O ; type MirroredElemTypes }
     type CoproductGeneric[O] = Mirror.Sum { type MirroredType = O ; type MirroredElemTypes }
 
-    def Generic[O](implicit gen: Generic[O]): Generic[O] { type MirroredElemTypes = gen.MirroredElemTypes ; type MirroredLabel = gen.MirroredLabel ; type MirroredElemLabels = gen.MirroredElemLabels } = gen
-    def ProductGeneric[O](implicit gen: ProductGeneric[O]): ProductGeneric[O] { type MirroredElemTypes = gen.MirroredElemTypes ; type MirroredLabel = gen.MirroredLabel ; type MirroredElemLabels = gen.MirroredElemLabels } = gen
-    def CoproductGeneric[O](implicit gen: CoproductGeneric[O]): CoproductGeneric[O] { type MirroredElemTypes = gen.MirroredElemTypes ; type MirroredLabel = gen.MirroredLabel ; type MirroredElemLabels = gen.MirroredElemLabels } = gen
+    def Generic[O] given (gen: Generic[O]): Generic[O] { type MirroredElemTypes = gen.MirroredElemTypes ; type MirroredLabel = gen.MirroredLabel ; type MirroredElemLabels = gen.MirroredElemLabels } = gen
+    def ProductGeneric[O] given (gen: ProductGeneric[O]): ProductGeneric[O] { type MirroredElemTypes = gen.MirroredElemTypes ; type MirroredLabel = gen.MirroredLabel ; type MirroredElemLabels = gen.MirroredElemLabels } = gen
+    def CoproductGeneric[O] given (gen: CoproductGeneric[O]): CoproductGeneric[O] { type MirroredElemTypes = gen.MirroredElemTypes ; type MirroredLabel = gen.MirroredLabel ; type MirroredElemLabels = gen.MirroredElemLabels } = gen
 
     type Instances[F[_], T] = ErasedInstances[F[T]]
     type ProductInstances[F[_], T] = ErasedProductInstances[F[T]]
     type CoproductInstances[F[_], T] = ErasedCoproductInstances[F[T]]
 
-    def Instances[F[_], T](implicit inst: Instances[F, T]): inst.type = inst
-    def ProductInstances[F[_], T](implicit inst: ProductInstances[F, T]): inst.type = inst
-    def CoproductInstances[F[_], T](implicit inst: CoproductInstances[F, T]): inst.type = inst
+    def Instances[F[_], T] given (inst: Instances[F, T]): inst.type = inst
+    def ProductInstances[F[_], T] given (inst: ProductInstances[F, T]): inst.type = inst
+    def CoproductInstances[F[_], T] given (inst: CoproductInstances[F, T]): inst.type = inst
 
     type ToUnion[T] = T match {
       case Unit => Nothing
@@ -196,27 +281,6 @@ object Shapeless3 {
       }
     }
 
-    inline def summonAsArray[F[_], T]: Array[Any] = inline erasedValue[T] match {
-      case _: Unit => Array()
-      case _: Tuple1[a] => Array(summon[F[a]])
-      case _: (a, b) => Array(summon[F[a]], summon[F[b]])
-      case _: (a, b, c) => Array(summon[F[a]], summon[F[b]], summon[F[c]])
-      case _: (a, b, c, d) => Array(summon[F[a]], summon[F[b]], summon[F[c]], summon[F[d]])
-      case _: (a, b, c, d, e) => Array(summon[F[a]], summon[F[b]], summon[F[c]], summon[F[d]], summon[F[e]])
-      // (0 to 20 by 10) foreach { i => print("case _: ("); print((1 to i).map("v".+).mkString(", ")); print(") => Array("); print((1 to i).map(x => s"summon[F[v$x]]").mkString(", ")); println(")") }
-      // (30 to 100 by 10) foreach { i => print("case _: ("); print((1 to i).map("v".+).mkString(" *: ")); print(" *: Unit) => Array[Any]("); print((1 to i).map(x => s"summon[F[v$x]]").mkString(", ")); println(")") }
-      case _: (v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) => Array(summon[F[v1]], summon[F[v2]], summon[F[v3]], summon[F[v4]], summon[F[v5]], summon[F[v6]], summon[F[v7]], summon[F[v8]], summon[F[v9]], summon[F[v10]])
-      case _: (v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20) => Array(summon[F[v1]], summon[F[v2]], summon[F[v3]], summon[F[v4]], summon[F[v5]], summon[F[v6]], summon[F[v7]], summon[F[v8]], summon[F[v9]], summon[F[v10]], summon[F[v11]], summon[F[v12]], summon[F[v13]], summon[F[v14]], summon[F[v15]], summon[F[v16]], summon[F[v17]], summon[F[v18]], summon[F[v19]], summon[F[v20]])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: Unit) => Array[Any](summon[F[v1]], summon[F[v2]], summon[F[v3]], summon[F[v4]], summon[F[v5]], summon[F[v6]], summon[F[v7]], summon[F[v8]], summon[F[v9]], summon[F[v10]], summon[F[v11]], summon[F[v12]], summon[F[v13]], summon[F[v14]], summon[F[v15]], summon[F[v16]], summon[F[v17]], summon[F[v18]], summon[F[v19]], summon[F[v20]], summon[F[v21]], summon[F[v22]], summon[F[v23]], summon[F[v24]], summon[F[v25]], summon[F[v26]], summon[F[v27]], summon[F[v28]], summon[F[v29]], summon[F[v30]])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: Unit) => Array[Any](summon[F[v1]], summon[F[v2]], summon[F[v3]], summon[F[v4]], summon[F[v5]], summon[F[v6]], summon[F[v7]], summon[F[v8]], summon[F[v9]], summon[F[v10]], summon[F[v11]], summon[F[v12]], summon[F[v13]], summon[F[v14]], summon[F[v15]], summon[F[v16]], summon[F[v17]], summon[F[v18]], summon[F[v19]], summon[F[v20]], summon[F[v21]], summon[F[v22]], summon[F[v23]], summon[F[v24]], summon[F[v25]], summon[F[v26]], summon[F[v27]], summon[F[v28]], summon[F[v29]], summon[F[v30]], summon[F[v31]], summon[F[v32]], summon[F[v33]], summon[F[v34]], summon[F[v35]], summon[F[v36]], summon[F[v37]], summon[F[v38]], summon[F[v39]], summon[F[v40]])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: Unit) => Array[Any](summon[F[v1]], summon[F[v2]], summon[F[v3]], summon[F[v4]], summon[F[v5]], summon[F[v6]], summon[F[v7]], summon[F[v8]], summon[F[v9]], summon[F[v10]], summon[F[v11]], summon[F[v12]], summon[F[v13]], summon[F[v14]], summon[F[v15]], summon[F[v16]], summon[F[v17]], summon[F[v18]], summon[F[v19]], summon[F[v20]], summon[F[v21]], summon[F[v22]], summon[F[v23]], summon[F[v24]], summon[F[v25]], summon[F[v26]], summon[F[v27]], summon[F[v28]], summon[F[v29]], summon[F[v30]], summon[F[v31]], summon[F[v32]], summon[F[v33]], summon[F[v34]], summon[F[v35]], summon[F[v36]], summon[F[v37]], summon[F[v38]], summon[F[v39]], summon[F[v40]], summon[F[v41]], summon[F[v42]], summon[F[v43]], summon[F[v44]], summon[F[v45]], summon[F[v46]], summon[F[v47]], summon[F[v48]], summon[F[v49]], summon[F[v50]])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: v51 *: v52 *: v53 *: v54 *: v55 *: v56 *: v57 *: v58 *: v59 *: v60 *: Unit) => Array[Any](summon[F[v1]], summon[F[v2]], summon[F[v3]], summon[F[v4]], summon[F[v5]], summon[F[v6]], summon[F[v7]], summon[F[v8]], summon[F[v9]], summon[F[v10]], summon[F[v11]], summon[F[v12]], summon[F[v13]], summon[F[v14]], summon[F[v15]], summon[F[v16]], summon[F[v17]], summon[F[v18]], summon[F[v19]], summon[F[v20]], summon[F[v21]], summon[F[v22]], summon[F[v23]], summon[F[v24]], summon[F[v25]], summon[F[v26]], summon[F[v27]], summon[F[v28]], summon[F[v29]], summon[F[v30]], summon[F[v31]], summon[F[v32]], summon[F[v33]], summon[F[v34]], summon[F[v35]], summon[F[v36]], summon[F[v37]], summon[F[v38]], summon[F[v39]], summon[F[v40]], summon[F[v41]], summon[F[v42]], summon[F[v43]], summon[F[v44]], summon[F[v45]], summon[F[v46]], summon[F[v47]], summon[F[v48]], summon[F[v49]], summon[F[v50]], summon[F[v51]], summon[F[v52]], summon[F[v53]], summon[F[v54]], summon[F[v55]], summon[F[v56]], summon[F[v57]], summon[F[v58]], summon[F[v59]], summon[F[v60]])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: v51 *: v52 *: v53 *: v54 *: v55 *: v56 *: v57 *: v58 *: v59 *: v60 *: v61 *: v62 *: v63 *: v64 *: v65 *: v66 *: v67 *: v68 *: v69 *: v70 *: Unit) => Array[Any](summon[F[v1]], summon[F[v2]], summon[F[v3]], summon[F[v4]], summon[F[v5]], summon[F[v6]], summon[F[v7]], summon[F[v8]], summon[F[v9]], summon[F[v10]], summon[F[v11]], summon[F[v12]], summon[F[v13]], summon[F[v14]], summon[F[v15]], summon[F[v16]], summon[F[v17]], summon[F[v18]], summon[F[v19]], summon[F[v20]], summon[F[v21]], summon[F[v22]], summon[F[v23]], summon[F[v24]], summon[F[v25]], summon[F[v26]], summon[F[v27]], summon[F[v28]], summon[F[v29]], summon[F[v30]], summon[F[v31]], summon[F[v32]], summon[F[v33]], summon[F[v34]], summon[F[v35]], summon[F[v36]], summon[F[v37]], summon[F[v38]], summon[F[v39]], summon[F[v40]], summon[F[v41]], summon[F[v42]], summon[F[v43]], summon[F[v44]], summon[F[v45]], summon[F[v46]], summon[F[v47]], summon[F[v48]], summon[F[v49]], summon[F[v50]], summon[F[v51]], summon[F[v52]], summon[F[v53]], summon[F[v54]], summon[F[v55]], summon[F[v56]], summon[F[v57]], summon[F[v58]], summon[F[v59]], summon[F[v60]], summon[F[v61]], summon[F[v62]], summon[F[v63]], summon[F[v64]], summon[F[v65]], summon[F[v66]], summon[F[v67]], summon[F[v68]], summon[F[v69]], summon[F[v70]])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: v51 *: v52 *: v53 *: v54 *: v55 *: v56 *: v57 *: v58 *: v59 *: v60 *: v61 *: v62 *: v63 *: v64 *: v65 *: v66 *: v67 *: v68 *: v69 *: v70 *: v71 *: v72 *: v73 *: v74 *: v75 *: v76 *: v77 *: v78 *: v79 *: v80 *: Unit) => Array[Any](summon[F[v1]], summon[F[v2]], summon[F[v3]], summon[F[v4]], summon[F[v5]], summon[F[v6]], summon[F[v7]], summon[F[v8]], summon[F[v9]], summon[F[v10]], summon[F[v11]], summon[F[v12]], summon[F[v13]], summon[F[v14]], summon[F[v15]], summon[F[v16]], summon[F[v17]], summon[F[v18]], summon[F[v19]], summon[F[v20]], summon[F[v21]], summon[F[v22]], summon[F[v23]], summon[F[v24]], summon[F[v25]], summon[F[v26]], summon[F[v27]], summon[F[v28]], summon[F[v29]], summon[F[v30]], summon[F[v31]], summon[F[v32]], summon[F[v33]], summon[F[v34]], summon[F[v35]], summon[F[v36]], summon[F[v37]], summon[F[v38]], summon[F[v39]], summon[F[v40]], summon[F[v41]], summon[F[v42]], summon[F[v43]], summon[F[v44]], summon[F[v45]], summon[F[v46]], summon[F[v47]], summon[F[v48]], summon[F[v49]], summon[F[v50]], summon[F[v51]], summon[F[v52]], summon[F[v53]], summon[F[v54]], summon[F[v55]], summon[F[v56]], summon[F[v57]], summon[F[v58]], summon[F[v59]], summon[F[v60]], summon[F[v61]], summon[F[v62]], summon[F[v63]], summon[F[v64]], summon[F[v65]], summon[F[v66]], summon[F[v67]], summon[F[v68]], summon[F[v69]], summon[F[v70]], summon[F[v71]], summon[F[v72]], summon[F[v73]], summon[F[v74]], summon[F[v75]], summon[F[v76]], summon[F[v77]], summon[F[v78]], summon[F[v79]], summon[F[v80]])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: v51 *: v52 *: v53 *: v54 *: v55 *: v56 *: v57 *: v58 *: v59 *: v60 *: v61 *: v62 *: v63 *: v64 *: v65 *: v66 *: v67 *: v68 *: v69 *: v70 *: v71 *: v72 *: v73 *: v74 *: v75 *: v76 *: v77 *: v78 *: v79 *: v80 *: v81 *: v82 *: v83 *: v84 *: v85 *: v86 *: v87 *: v88 *: v89 *: v90 *: Unit) => Array[Any](summon[F[v1]], summon[F[v2]], summon[F[v3]], summon[F[v4]], summon[F[v5]], summon[F[v6]], summon[F[v7]], summon[F[v8]], summon[F[v9]], summon[F[v10]], summon[F[v11]], summon[F[v12]], summon[F[v13]], summon[F[v14]], summon[F[v15]], summon[F[v16]], summon[F[v17]], summon[F[v18]], summon[F[v19]], summon[F[v20]], summon[F[v21]], summon[F[v22]], summon[F[v23]], summon[F[v24]], summon[F[v25]], summon[F[v26]], summon[F[v27]], summon[F[v28]], summon[F[v29]], summon[F[v30]], summon[F[v31]], summon[F[v32]], summon[F[v33]], summon[F[v34]], summon[F[v35]], summon[F[v36]], summon[F[v37]], summon[F[v38]], summon[F[v39]], summon[F[v40]], summon[F[v41]], summon[F[v42]], summon[F[v43]], summon[F[v44]], summon[F[v45]], summon[F[v46]], summon[F[v47]], summon[F[v48]], summon[F[v49]], summon[F[v50]], summon[F[v51]], summon[F[v52]], summon[F[v53]], summon[F[v54]], summon[F[v55]], summon[F[v56]], summon[F[v57]], summon[F[v58]], summon[F[v59]], summon[F[v60]], summon[F[v61]], summon[F[v62]], summon[F[v63]], summon[F[v64]], summon[F[v65]], summon[F[v66]], summon[F[v67]], summon[F[v68]], summon[F[v69]], summon[F[v70]], summon[F[v71]], summon[F[v72]], summon[F[v73]], summon[F[v74]], summon[F[v75]], summon[F[v76]], summon[F[v77]], summon[F[v78]], summon[F[v79]], summon[F[v80]], summon[F[v81]], summon[F[v82]], summon[F[v83]], summon[F[v84]], summon[F[v85]], summon[F[v86]], summon[F[v87]], summon[F[v88]], summon[F[v89]], summon[F[v90]])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: v51 *: v52 *: v53 *: v54 *: v55 *: v56 *: v57 *: v58 *: v59 *: v60 *: v61 *: v62 *: v63 *: v64 *: v65 *: v66 *: v67 *: v68 *: v69 *: v70 *: v71 *: v72 *: v73 *: v74 *: v75 *: v76 *: v77 *: v78 *: v79 *: v80 *: v81 *: v82 *: v83 *: v84 *: v85 *: v86 *: v87 *: v88 *: v89 *: v90 *: v91 *: v92 *: v93 *: v94 *: v95 *: v96 *: v97 *: v98 *: v99 *: v100 *: Unit) => Array[Any](summon[F[v1]], summon[F[v2]], summon[F[v3]], summon[F[v4]], summon[F[v5]], summon[F[v6]], summon[F[v7]], summon[F[v8]], summon[F[v9]], summon[F[v10]], summon[F[v11]], summon[F[v12]], summon[F[v13]], summon[F[v14]], summon[F[v15]], summon[F[v16]], summon[F[v17]], summon[F[v18]], summon[F[v19]], summon[F[v20]], summon[F[v21]], summon[F[v22]], summon[F[v23]], summon[F[v24]], summon[F[v25]], summon[F[v26]], summon[F[v27]], summon[F[v28]], summon[F[v29]], summon[F[v30]], summon[F[v31]], summon[F[v32]], summon[F[v33]], summon[F[v34]], summon[F[v35]], summon[F[v36]], summon[F[v37]], summon[F[v38]], summon[F[v39]], summon[F[v40]], summon[F[v41]], summon[F[v42]], summon[F[v43]], summon[F[v44]], summon[F[v45]], summon[F[v46]], summon[F[v47]], summon[F[v48]], summon[F[v49]], summon[F[v50]], summon[F[v51]], summon[F[v52]], summon[F[v53]], summon[F[v54]], summon[F[v55]], summon[F[v56]], summon[F[v57]], summon[F[v58]], summon[F[v59]], summon[F[v60]], summon[F[v61]], summon[F[v62]], summon[F[v63]], summon[F[v64]], summon[F[v65]], summon[F[v66]], summon[F[v67]], summon[F[v68]], summon[F[v69]], summon[F[v70]], summon[F[v71]], summon[F[v72]], summon[F[v73]], summon[F[v74]], summon[F[v75]], summon[F[v76]], summon[F[v77]], summon[F[v78]], summon[F[v79]], summon[F[v80]], summon[F[v81]], summon[F[v82]], summon[F[v83]], summon[F[v84]], summon[F[v85]], summon[F[v86]], summon[F[v87]], summon[F[v88]], summon[F[v89]], summon[F[v90]], summon[F[v91]], summon[F[v92]], summon[F[v93]], summon[F[v94]], summon[F[v95]], summon[F[v96]], summon[F[v97]], summon[F[v98]], summon[F[v99]], summon[F[v100]])
-    }
-
     type LiftP[F[_], T] <: Tuple = T match {
       case Unit => Unit
       case a *: b => F[a] *: LiftP[F, b]
@@ -231,7 +295,7 @@ object Shapeless3 {
       }
     }
 
-    implicit object Ops {
+    given Ops {
       inline def (gen: ProductGeneric[Obj]) toRepr [Obj] (o: Obj): gen.MirroredElemTypes = Tuple.fromProduct(o.asInstanceOf).asInstanceOf[gen.MirroredElemTypes]
       inline def (gen: ProductGeneric[Obj]) fromRepr [Obj] (r: gen.MirroredElemTypes): Obj = gen.fromProduct(r.asInstanceOf).asInstanceOf[Obj]
 
@@ -263,23 +327,17 @@ object Shapeless3 {
     type ProductGenericR[O, R] = Mirror.Product { type MirroredType = O ; type MirroredElemTypes = R }
     type CoproductGenericR[O, R] = Mirror.Sum { type MirroredType = O ; type MirroredElemTypes = R }
 
-    inline implicit def mkInstances[F[_], T](implicit gen: Generic[T]): ErasedInstances[F[T]] =
+    inline given mkInstances[F[_], T] as ErasedInstances[F[T]] given (gen: Generic[T]) =
       inline gen match {
-        case p: ProductGeneric[T]   => mkProductInstances[F, T](p)
-        case c: CoproductGeneric[T] => mkCoproductInstances[F, T](c)
+        case p: ProductGeneric[T]   => mkProductInstances[F, T] given p
+        case c: CoproductGeneric[T] => mkCoproductInstances[F, T] given c
       }
 
-    inline implicit def mkProductInstances[F[_], T](implicit gen: ProductGeneric[T]): ErasedProductInstances[F[T]] =
-      new ErasedProductInstances(gen, summonAsArray[F, gen.MirroredElemTypes]).asInstanceOf
+    inline given mkProductInstances[F[_], T] as ErasedProductInstances[F[T]] given (gen: ProductGeneric[T]) =
+      ErasedProductInstances[F[T], LiftP[F, gen.MirroredElemTypes]](gen)
 
-    inline implicit def mkCoproductInstances[F[_], T](implicit gen: CoproductGeneric[T]): ErasedCoproductInstances[F[T]] =
-      new ErasedCoproductInstances(gen, summonAsArray[F, gen.MirroredElemTypes]).asInstanceOf
-
-    inline def derive[F[_], T](gen: Generic[T], pg: ProductInstances[F, T] => F[T], cg: CoproductInstances[F, T] => F[T]): F[T] =
-      inline gen match {
-        case p: ProductGeneric[T]   => pg(mkProductInstances[F, T](p))
-        case c: CoproductGeneric[T] => cg(mkCoproductInstances[F, T](c))
-      }
+    inline given mkCoproductInstances[F[_], T] as ErasedCoproductInstances[F[T]] given (gen: CoproductGeneric[T]) =
+      ErasedCoproductInstances[F[T], LiftP[F, gen.MirroredElemTypes]](gen)
   }
 
   object K1 {
@@ -287,17 +345,17 @@ object Shapeless3 {
     type ProductGeneric[O[_]] = Mirror.Product { type MirroredType = O ; type MirroredElemTypes[_] }
     type CoproductGeneric[O[_]] = Mirror.Sum { type MirroredType = O ; type MirroredElemTypes[_] }
 
-    def Generic[O[_]](implicit gen: Generic[O]): gen.type = gen
-    def ProductGeneric[O[_]](implicit gen: ProductGeneric[O]): gen.type = gen
-    def CoproductGeneric[O[_]](implicit gen: CoproductGeneric[O]): gen.type = gen
+    def Generic[O[_]] given (gen: Generic[O]): gen.type = gen
+    def ProductGeneric[O[_]] given (gen: ProductGeneric[O]): gen.type = gen
+    def CoproductGeneric[O[_]] given (gen: CoproductGeneric[O]): gen.type = gen
 
     type Instances[F[_[_]], T[_]] = ErasedInstances[F[T]]
     type ProductInstances[F[_[_]], T[_]] = ErasedProductInstances[F[T]]
     type CoproductInstances[F[_[_]], T[_]] = ErasedCoproductInstances[F[T]]
 
-    def Instances[F[_[_]], T[_]](implicit inst: Instances[F, T]): inst.type = inst
-    def ProductInstances[F[_[_]], T[_]](implicit inst: ProductInstances[F, T]): inst.type = inst
-    def CoproductInstances[F[_[_]], T[_]](implicit inst: CoproductInstances[F, T]): inst.type = inst
+    def Instances[F[_[_]], T[_]] given (inst: Instances[F, T]): inst.type = inst
+    def ProductInstances[F[_[_]], T[_]] given (inst: ProductInstances[F, T]): inst.type = inst
+    def CoproductInstances[F[_[_]], T[_]] given (inst: CoproductInstances[F, T]): inst.type = inst
 
     class Dummy
     type Apply[T[_]] = T[Dummy]
@@ -305,31 +363,6 @@ object Shapeless3 {
       case Wrap[Apply[a]] => F[a]
       case Wrap[Dummy] => F[Id]
       case Wrap[c] => F[Const[c]]
-    }
-
-    inline def summon[F[_[_]], T] = implicit match {
-      case ft: Unapply[F, Wrap[T]] => ft
-    }
-
-    inline def summonAsArray[F[_[_]], T[_]]: Array[Any] = inline erasedValue[Apply[T]] match {
-      case _: Unit => Array()
-      case _: Tuple1[a] => Array(summon[F, a])
-      case _: (a, b) => Array(summon[F, a], summon[F, b])
-      case _: (a, b, c) => Array(summon[F, a], summon[F, b], summon[F, c])
-      case _: (a, b, c, d) => Array(summon[F, a], summon[F, b], summon[F, c], summon[F, d])
-      case _: (a, b, c, d, e) => Array(summon[F, a], summon[F, b], summon[F, c], summon[F, d], summon[F, e])
-      // (0 to 20 by 10) foreach { i => print("case _: ("); print((1 to i).map("v".+).mkString(", ")); print(") => Array("); print((1 to i).map(x => s"summon[F, v$x]").mkString(", ")); println(")") }
-      // (30 to 100 by 10) foreach { i => print("case _: ("); print((1 to i).map("v".+).mkString(" *: ")); print(" *: Unit) => Array[Any]("); print((1 to i).map(x => s"summon[F, v$x]").mkString(", ")); println(")") }
-      case _: (v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) => Array[Any](summon[F, v1], summon[F, v2], summon[F, v3], summon[F, v4], summon[F, v5], summon[F, v6], summon[F, v7], summon[F, v8], summon[F, v9], summon[F, v10])
-      case _: (v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20) => Array[Any](summon[F, v1], summon[F, v2], summon[F, v3], summon[F, v4], summon[F, v5], summon[F, v6], summon[F, v7], summon[F, v8], summon[F, v9], summon[F, v10], summon[F, v11], summon[F, v12], summon[F, v13], summon[F, v14], summon[F, v15], summon[F, v16], summon[F, v17], summon[F, v18], summon[F, v19], summon[F, v20])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: Unit) => Array[Any](summon[F, v1], summon[F, v2], summon[F, v3], summon[F, v4], summon[F, v5], summon[F, v6], summon[F, v7], summon[F, v8], summon[F, v9], summon[F, v10], summon[F, v11], summon[F, v12], summon[F, v13], summon[F, v14], summon[F, v15], summon[F, v16], summon[F, v17], summon[F, v18], summon[F, v19], summon[F, v20], summon[F, v21], summon[F, v22], summon[F, v23], summon[F, v24], summon[F, v25], summon[F, v26], summon[F, v27], summon[F, v28], summon[F, v29], summon[F, v30])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: Unit) => Array[Any](summon[F, v1], summon[F, v2], summon[F, v3], summon[F, v4], summon[F, v5], summon[F, v6], summon[F, v7], summon[F, v8], summon[F, v9], summon[F, v10], summon[F, v11], summon[F, v12], summon[F, v13], summon[F, v14], summon[F, v15], summon[F, v16], summon[F, v17], summon[F, v18], summon[F, v19], summon[F, v20], summon[F, v21], summon[F, v22], summon[F, v23], summon[F, v24], summon[F, v25], summon[F, v26], summon[F, v27], summon[F, v28], summon[F, v29], summon[F, v30], summon[F, v31], summon[F, v32], summon[F, v33], summon[F, v34], summon[F, v35], summon[F, v36], summon[F, v37], summon[F, v38], summon[F, v39], summon[F, v40])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: Unit) => Array[Any](summon[F, v1], summon[F, v2], summon[F, v3], summon[F, v4], summon[F, v5], summon[F, v6], summon[F, v7], summon[F, v8], summon[F, v9], summon[F, v10], summon[F, v11], summon[F, v12], summon[F, v13], summon[F, v14], summon[F, v15], summon[F, v16], summon[F, v17], summon[F, v18], summon[F, v19], summon[F, v20], summon[F, v21], summon[F, v22], summon[F, v23], summon[F, v24], summon[F, v25], summon[F, v26], summon[F, v27], summon[F, v28], summon[F, v29], summon[F, v30], summon[F, v31], summon[F, v32], summon[F, v33], summon[F, v34], summon[F, v35], summon[F, v36], summon[F, v37], summon[F, v38], summon[F, v39], summon[F, v40], summon[F, v41], summon[F, v42], summon[F, v43], summon[F, v44], summon[F, v45], summon[F, v46], summon[F, v47], summon[F, v48], summon[F, v49], summon[F, v50])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: v51 *: v52 *: v53 *: v54 *: v55 *: v56 *: v57 *: v58 *: v59 *: v60 *: Unit) => Array[Any](summon[F, v1], summon[F, v2], summon[F, v3], summon[F, v4], summon[F, v5], summon[F, v6], summon[F, v7], summon[F, v8], summon[F, v9], summon[F, v10], summon[F, v11], summon[F, v12], summon[F, v13], summon[F, v14], summon[F, v15], summon[F, v16], summon[F, v17], summon[F, v18], summon[F, v19], summon[F, v20], summon[F, v21], summon[F, v22], summon[F, v23], summon[F, v24], summon[F, v25], summon[F, v26], summon[F, v27], summon[F, v28], summon[F, v29], summon[F, v30], summon[F, v31], summon[F, v32], summon[F, v33], summon[F, v34], summon[F, v35], summon[F, v36], summon[F, v37], summon[F, v38], summon[F, v39], summon[F, v40], summon[F, v41], summon[F, v42], summon[F, v43], summon[F, v44], summon[F, v45], summon[F, v46], summon[F, v47], summon[F, v48], summon[F, v49], summon[F, v50], summon[F, v51], summon[F, v52], summon[F, v53], summon[F, v54], summon[F, v55], summon[F, v56], summon[F, v57], summon[F, v58], summon[F, v59], summon[F, v60])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: v51 *: v52 *: v53 *: v54 *: v55 *: v56 *: v57 *: v58 *: v59 *: v60 *: v61 *: v62 *: v63 *: v64 *: v65 *: v66 *: v67 *: v68 *: v69 *: v70 *: Unit) => Array[Any](summon[F, v1], summon[F, v2], summon[F, v3], summon[F, v4], summon[F, v5], summon[F, v6], summon[F, v7], summon[F, v8], summon[F, v9], summon[F, v10], summon[F, v11], summon[F, v12], summon[F, v13], summon[F, v14], summon[F, v15], summon[F, v16], summon[F, v17], summon[F, v18], summon[F, v19], summon[F, v20], summon[F, v21], summon[F, v22], summon[F, v23], summon[F, v24], summon[F, v25], summon[F, v26], summon[F, v27], summon[F, v28], summon[F, v29], summon[F, v30], summon[F, v31], summon[F, v32], summon[F, v33], summon[F, v34], summon[F, v35], summon[F, v36], summon[F, v37], summon[F, v38], summon[F, v39], summon[F, v40], summon[F, v41], summon[F, v42], summon[F, v43], summon[F, v44], summon[F, v45], summon[F, v46], summon[F, v47], summon[F, v48], summon[F, v49], summon[F, v50], summon[F, v51], summon[F, v52], summon[F, v53], summon[F, v54], summon[F, v55], summon[F, v56], summon[F, v57], summon[F, v58], summon[F, v59], summon[F, v60], summon[F, v61], summon[F, v62], summon[F, v63], summon[F, v64], summon[F, v65], summon[F, v66], summon[F, v67], summon[F, v68], summon[F, v69], summon[F, v70])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: v51 *: v52 *: v53 *: v54 *: v55 *: v56 *: v57 *: v58 *: v59 *: v60 *: v61 *: v62 *: v63 *: v64 *: v65 *: v66 *: v67 *: v68 *: v69 *: v70 *: v71 *: v72 *: v73 *: v74 *: v75 *: v76 *: v77 *: v78 *: v79 *: v80 *: Unit) => Array[Any](summon[F, v1], summon[F, v2], summon[F, v3], summon[F, v4], summon[F, v5], summon[F, v6], summon[F, v7], summon[F, v8], summon[F, v9], summon[F, v10], summon[F, v11], summon[F, v12], summon[F, v13], summon[F, v14], summon[F, v15], summon[F, v16], summon[F, v17], summon[F, v18], summon[F, v19], summon[F, v20], summon[F, v21], summon[F, v22], summon[F, v23], summon[F, v24], summon[F, v25], summon[F, v26], summon[F, v27], summon[F, v28], summon[F, v29], summon[F, v30], summon[F, v31], summon[F, v32], summon[F, v33], summon[F, v34], summon[F, v35], summon[F, v36], summon[F, v37], summon[F, v38], summon[F, v39], summon[F, v40], summon[F, v41], summon[F, v42], summon[F, v43], summon[F, v44], summon[F, v45], summon[F, v46], summon[F, v47], summon[F, v48], summon[F, v49], summon[F, v50], summon[F, v51], summon[F, v52], summon[F, v53], summon[F, v54], summon[F, v55], summon[F, v56], summon[F, v57], summon[F, v58], summon[F, v59], summon[F, v60], summon[F, v61], summon[F, v62], summon[F, v63], summon[F, v64], summon[F, v65], summon[F, v66], summon[F, v67], summon[F, v68], summon[F, v69], summon[F, v70], summon[F, v71], summon[F, v72], summon[F, v73], summon[F, v74], summon[F, v75], summon[F, v76], summon[F, v77], summon[F, v78], summon[F, v79], summon[F, v80])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: v51 *: v52 *: v53 *: v54 *: v55 *: v56 *: v57 *: v58 *: v59 *: v60 *: v61 *: v62 *: v63 *: v64 *: v65 *: v66 *: v67 *: v68 *: v69 *: v70 *: v71 *: v72 *: v73 *: v74 *: v75 *: v76 *: v77 *: v78 *: v79 *: v80 *: v81 *: v82 *: v83 *: v84 *: v85 *: v86 *: v87 *: v88 *: v89 *: v90 *: Unit) => Array[Any](summon[F, v1], summon[F, v2], summon[F, v3], summon[F, v4], summon[F, v5], summon[F, v6], summon[F, v7], summon[F, v8], summon[F, v9], summon[F, v10], summon[F, v11], summon[F, v12], summon[F, v13], summon[F, v14], summon[F, v15], summon[F, v16], summon[F, v17], summon[F, v18], summon[F, v19], summon[F, v20], summon[F, v21], summon[F, v22], summon[F, v23], summon[F, v24], summon[F, v25], summon[F, v26], summon[F, v27], summon[F, v28], summon[F, v29], summon[F, v30], summon[F, v31], summon[F, v32], summon[F, v33], summon[F, v34], summon[F, v35], summon[F, v36], summon[F, v37], summon[F, v38], summon[F, v39], summon[F, v40], summon[F, v41], summon[F, v42], summon[F, v43], summon[F, v44], summon[F, v45], summon[F, v46], summon[F, v47], summon[F, v48], summon[F, v49], summon[F, v50], summon[F, v51], summon[F, v52], summon[F, v53], summon[F, v54], summon[F, v55], summon[F, v56], summon[F, v57], summon[F, v58], summon[F, v59], summon[F, v60], summon[F, v61], summon[F, v62], summon[F, v63], summon[F, v64], summon[F, v65], summon[F, v66], summon[F, v67], summon[F, v68], summon[F, v69], summon[F, v70], summon[F, v71], summon[F, v72], summon[F, v73], summon[F, v74], summon[F, v75], summon[F, v76], summon[F, v77], summon[F, v78], summon[F, v79], summon[F, v80], summon[F, v81], summon[F, v82], summon[F, v83], summon[F, v84], summon[F, v85], summon[F, v86], summon[F, v87], summon[F, v88], summon[F, v89], summon[F, v90])
-      case _: (v1 *: v2 *: v3 *: v4 *: v5 *: v6 *: v7 *: v8 *: v9 *: v10 *: v11 *: v12 *: v13 *: v14 *: v15 *: v16 *: v17 *: v18 *: v19 *: v20 *: v21 *: v22 *: v23 *: v24 *: v25 *: v26 *: v27 *: v28 *: v29 *: v30 *: v31 *: v32 *: v33 *: v34 *: v35 *: v36 *: v37 *: v38 *: v39 *: v40 *: v41 *: v42 *: v43 *: v44 *: v45 *: v46 *: v47 *: v48 *: v49 *: v50 *: v51 *: v52 *: v53 *: v54 *: v55 *: v56 *: v57 *: v58 *: v59 *: v60 *: v61 *: v62 *: v63 *: v64 *: v65 *: v66 *: v67 *: v68 *: v69 *: v70 *: v71 *: v72 *: v73 *: v74 *: v75 *: v76 *: v77 *: v78 *: v79 *: v80 *: v81 *: v82 *: v83 *: v84 *: v85 *: v86 *: v87 *: v88 *: v89 *: v90 *: v91 *: v92 *: v93 *: v94 *: v95 *: v96 *: v97 *: v98 *: v99 *: v100 *: Unit) => Array[Any](summon[F, v1], summon[F, v2], summon[F, v3], summon[F, v4], summon[F, v5], summon[F, v6], summon[F, v7], summon[F, v8], summon[F, v9], summon[F, v10], summon[F, v11], summon[F, v12], summon[F, v13], summon[F, v14], summon[F, v15], summon[F, v16], summon[F, v17], summon[F, v18], summon[F, v19], summon[F, v20], summon[F, v21], summon[F, v22], summon[F, v23], summon[F, v24], summon[F, v25], summon[F, v26], summon[F, v27], summon[F, v28], summon[F, v29], summon[F, v30], summon[F, v31], summon[F, v32], summon[F, v33], summon[F, v34], summon[F, v35], summon[F, v36], summon[F, v37], summon[F, v38], summon[F, v39], summon[F, v40], summon[F, v41], summon[F, v42], summon[F, v43], summon[F, v44], summon[F, v45], summon[F, v46], summon[F, v47], summon[F, v48], summon[F, v49], summon[F, v50], summon[F, v51], summon[F, v52], summon[F, v53], summon[F, v54], summon[F, v55], summon[F, v56], summon[F, v57], summon[F, v58], summon[F, v59], summon[F, v60], summon[F, v61], summon[F, v62], summon[F, v63], summon[F, v64], summon[F, v65], summon[F, v66], summon[F, v67], summon[F, v68], summon[F, v69], summon[F, v70], summon[F, v71], summon[F, v72], summon[F, v73], summon[F, v74], summon[F, v75], summon[F, v76], summon[F, v77], summon[F, v78], summon[F, v79], summon[F, v80], summon[F, v81], summon[F, v82], summon[F, v83], summon[F, v84], summon[F, v85], summon[F, v86], summon[F, v87], summon[F, v88], summon[F, v89], summon[F, v90], summon[F, v91], summon[F, v92], summon[F, v93], summon[F, v94], summon[F, v95], summon[F, v96], summon[F, v97], summon[F, v98], summon[F, v99], summon[F, v100])
     }
 
     type LiftP[F[_[_]], T[_]] = LiftP0[F, Apply[T]]
@@ -348,7 +381,7 @@ object Shapeless3 {
       }
     }
 
-    implicit object Ops {
+    given Ops {
       inline def (gen: ProductGeneric[Obj]) toRepr [Obj[_], A] (o: Obj[A]): gen.MirroredElemTypes[A] = Tuple.fromProduct(o.asInstanceOf).asInstanceOf[gen.MirroredElemTypes[A]]
       inline def (gen: ProductGeneric[Obj]) fromRepr [Obj[_], A] (r: gen.MirroredElemTypes[A]): Obj[A] = gen.fromProduct(r.asInstanceOf).asInstanceOf[Obj[A]]
 
@@ -373,64 +406,59 @@ object Shapeless3 {
         inst.erasedFold2(x, y)(a.asInstanceOf)(f.asInstanceOf).asInstanceOf
     }
 
-    inline implicit def mkInstances[F[_[_]], T[_]](implicit gen: Generic[T]): ErasedInstances[F[T]] =
+    inline given mkInstances[F[_[_]], T[_]] as ErasedInstances[F[T]] given (gen: Generic[T]) =
       inline gen match {
-        case p: ProductGeneric[T] => mkProductInstances[F, T](p)
-        case c: CoproductGeneric[T] => mkCoproductInstances[F, T](c)
+        case p: ProductGeneric[T] => mkProductInstances[F, T] given p
+        case c: CoproductGeneric[T] => mkCoproductInstances[F, T] given c
       }
 
-    inline implicit def mkProductInstances[F[_[_]], T[_]](implicit gen: ProductGeneric[T]): ErasedProductInstances[F[T]] =
-      new ErasedProductInstances(gen, summonAsArray[F, gen.MirroredElemTypes]).asInstanceOf
+    inline given mkProductInstances[F[_[_]], T[_]] as ErasedProductInstances[F[T]] given (gen: ProductGeneric[T]) =
+      ErasedProductInstances[F[T], LiftP[F, gen.MirroredElemTypes]](gen)
 
-    inline implicit def mkCoproductInstances[F[_[_]], T[_]](implicit gen: CoproductGeneric[T]): ErasedCoproductInstances[F[T]] =
-      new ErasedCoproductInstances(gen, summonAsArray[F, gen.MirroredElemTypes]).asInstanceOf
+    inline given mkCoproductInstances[F[_[_]], T[_]] as ErasedCoproductInstances[F[T]] given (gen: CoproductGeneric[T]) =
+      ErasedCoproductInstances[F[T], LiftP[F, gen.MirroredElemTypes]](gen)
 
-    inline def derive[F[_[_]], T[_]](gen: Generic[T], pg: ProductInstances[F, T] => F[T], cg: CoproductInstances[F, T] => F[T]): F[T] =
-      inline gen match {
-        case p: ProductGeneric[T]   => pg(mkProductInstances[F, T](p))
-        case c: CoproductGeneric[T] => cg(mkCoproductInstances[F, T](c))
-      }
+    type LiftProductGeneric[O, E] = ProductGeneric[Const[O]] { type MirroredElemTypes = Const[E] }
 
-    implicit def mkK1_0[O](implicit k0: K0.ProductGeneric[O]): ProductGeneric[Const[O]] { type MirroredElemTypes = Const[k0.MirroredElemTypes] } = k0.asInstanceOf
+    given mkK1_0[O] as LiftProductGeneric[O, k0.MirroredElemTypes] given (k0: K0.ProductGeneric[O]) = k0.asInstanceOf
   }
-
-  // Type class definitions
 
   trait Eq[A] {
     def eqv(x: A, y: A): Boolean
   }
 
   object Eq {
-    inline def apply[A](implicit ea: Eq[A]): Eq[A] = ea
+    inline def apply[A] given (ea: Eq[A]): Eq[A] = ea
 
-    implicit val eqUnit: Eq[Unit] = new Eq[Unit] {
+    given as Eq[Unit] {
       def eqv(x: Unit, y: Unit): Boolean = true
     }
-    implicit val eqBoolean: Eq[Boolean] = new Eq[Boolean] {
+    given as Eq[Boolean] {
       def eqv(x: Boolean, y: Boolean): Boolean = x == y
     }
-    implicit val eqInt: Eq[Int] = new Eq[Int] {
+    given as Eq[Int] {
       def eqv(x: Int, y: Int): Boolean = x == y
     }
-    implicit val eqString: Eq[String] = new Eq[String] {
+    given as Eq[String] {
       def eqv(x: String, y: String): Boolean = x == y
     }
 
-    implicit def eqGen[A](implicit inst: => K0.ProductInstances[Eq, A]): Eq[A] =
-      new Eq[A] {
-        def eqv(x: A, y: A): Boolean = inst.foldLeft2(x, y)(true: Boolean)(
-          [t] => (acc: Boolean, eqt: Eq[t], t0: t, t1: t) => Complete(!eqt.eqv(t0, t1))(false)(true)
-        )
-      }
+    given eqGen[A] as Eq[A] given (inst: K0.ProductInstances[Eq, A]) {
+      def eqv(x: A, y: A): Boolean = inst.foldLeft2(x, y)(true: Boolean)(
+        [t] => (acc: Boolean, eqt: Eq[t], t0: t, t1: t) => Complete(!eqt.eqv(t0, t1))(false)(true)
+      )
+    }
 
-    implicit def eqGenC[A](implicit inst: => K0.CoproductInstances[Eq, A]): Eq[A] =
-      new Eq[A] {
-        def eqv(x: A, y: A): Boolean = inst.fold2(x, y)(false)(
-          [t] => (eqt: Eq[t], t0: t, t1: t) => eqt.eqv(t0, t1)
-        )
-      }
+    given eqGenC[A] as Eq[A] given (inst: => K0.CoproductInstances[Eq, A]) {
+      def eqv(x: A, y: A): Boolean = inst.fold2(x, y)(false)(
+        [t] => (eqt: Eq[t], t0: t, t1: t) => eqt.eqv(t0, t1)
+      )
+    }
 
-    inline def derived[A](implicit gen: K0.Generic[A]): Eq[A] = K0.derive(gen, eqGen, eqGenC)
+    inline def derived[A] given (gen: K0.Generic[A]): Eq[A] = inline gen match {
+      case p: K0.ProductGeneric[A]   => given as p.type = p ; eqGen
+      case c: K0.CoproductGeneric[A] => given as c.type = c ; eqGenC
+    }
   }
 
   trait Functor[F[_]] {
@@ -438,28 +466,25 @@ object Shapeless3 {
   }
 
   object Functor {
-    inline def apply[F[_]](implicit ff: Functor[F]): Functor[F] = ff
+    inline def apply[F[_]] given (ff: Functor[F]): Functor[F] = ff
 
-    implicit val functorId: Functor[Id] = new Functor[Id] {
+    given as Functor[Id] {
       def map[A, B](a: A)(f: A => B): B = f(a)
     }
 
-    implicit def functorNested[F[_], G[_]](implicit ff: Functor[F], fg: Functor[G]): Functor[[t] =>> F[G[t]]] =
-      new Functor[[t] =>> F[G[t]]] {
-        def map[A, B](fga: F[G[A]])(f: A => B): F[G[B]] = ff.map(fga)(ga => fg.map(ga)(f))
-      }
+    given [F[_], G[_]] as Functor[[t] =>> F[G[t]]] given (ff: Functor[F], fg: Functor[G]) {
+      def map[A, B](fga: F[G[A]])(f: A => B): F[G[B]] = ff.map(fga)(ga => fg.map(ga)(f))
+    }
 
-    implicit def functorGen[F[_]](implicit inst: => K1.Instances[Functor, F]): Functor[F] =
-      new Functor[F] {
-        def map[A, B](fa: F[A])(f: A => B): F[B] = inst.map(fa)([t[_]] => (ft: Functor[t], ta: t[A]) => ft.map(ta)(f))
-      }
+    given functorGen[F[_]] as Functor[F] given (inst: => K1.Instances[Functor, F]) {
+      def map[A, B](fa: F[A])(f: A => B): F[B] = inst.map(fa)([t[_]] => (ft: Functor[t], ta: t[A]) => ft.map(ta)(f))
+    }
 
-    implicit def functorConst[T]: Functor[Const[T]] = new Functor[Const[T]] {
+    given [T] as Functor[Const[T]] {
       def map[A, B](t: T)(f: A => B): T = t
     }
 
-    inline def derived[F[_]](implicit gen: K1.Generic[F]): Functor[F] =
-      functorGen(K1.mkInstances[Functor, F](gen))
+    inline def derived[F[_]] given (gen: K1.Generic[F]): Functor[F] = functorGen
   }
 }
 
