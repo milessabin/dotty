@@ -10,7 +10,7 @@ o() {
 mkdir "$HOME/out2" >/dev/null 2>&1 && sbt "run -d $HOME/out2 $HOME/workspace/dotty/tests/run-custom-args/typeclass-derivation-macro/1.scala"
 
 for framework in Inlined Shapeless3 Staged; do
-  for type in P0 P10 P20 P30 P40 P50 P60 P70 P80 P90 P100 C10 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
+  for type in P0 P10 P20 P30 P40 P50 P60 P70 P80 P90 P100 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
     test -f "bench/$framework-eq-$type.log" ||\
     sbt "dotty-bench-bootstrapped/jmh:run 10 15 $(echo "val x = $framework.Eq.derived[$type]" | o) -classpath $HOME/out2 -Xmax-inlines 1000" | tee "bench/$framework-eq-$type.log"
   done
@@ -30,7 +30,7 @@ cmd=""
 mkdir -p "bench/outs"
 
 for framework in Inlined Shapeless3 Staged; do
-  for type in P0 P10 P20 P30 P40 P50 P60 P70 P80 P90 P100 C10 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
+  for type in P0 P10 P20 P30 P40 P50 P60 P70 P80 P90 P100 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
     mkdir -p "bench/outs/$framework-$type"
     cmd="$cmd ; run $(echo "val x = $framework.Eq.derived[$type]" | o) -classpath $HOME/out2 -Xmax-inlines 1000 -d bench/outs/$framework-$type"
   done
@@ -48,7 +48,7 @@ sbt "$cmd"
 
 rm "bench/bytecode-sizes.log" || true
 for framework in Inlined Shapeless3 Staged; do
-  for type in P0 P10 P20 P30 P40 P50 P60 P70 P80 P90 P100 C10 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
+  for type in P0 P10 P20 P30 P40 P50 P60 P70 P80 P90 P100 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
     printf "$framework-$type,\t" >> "bench/bytecode-sizes.log"
     { find "bench/outs/$framework-$type" -type f -name "*.class" -printf "%s+"; echo 0; } | bc >> "bench/bytecode-sizes.log"
   done
@@ -79,7 +79,7 @@ done
 echo; echo "Compile time C"
 
 for framework in Inlined Shapeless3 Staged; do
-  for type in C10 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
+  for type in C20 C30 C40 C50 C60 C70 C80 C90 C100; do
     printf "$framework.$type"
     cat "bench/$framework-eq-$type.log" | grep '±(' | grep -oP '.*(?=±)' | sed "s/  /,\t/"
   done
