@@ -7,19 +7,19 @@ o() {
   echo "$t"
 }
 
-mkdir "/home/olivier/out2" >/dev/null 2>&1 && sbt "run -d /home/olivier/out2 /home/olivier/workspace/dotty/tests/run-custom-args/typeclass-derivation-macro/1.scala"
+mkdir "$HOME/out2" >/dev/null 2>&1 && sbt "run -d $HOME/out2 $HOME/workspace/dotty/tests/run-custom-args/typeclass-derivation-macro/1.scala"
 
 for framework in Inlined Shapeless3 Staged; do
-  for type in P0 C10 P10 P20 C20 P30 C30 P40 C40 P50 C50 P60 C60 P70 C70 P80 C80 P90 C90 P100 C100; do
+  for type in P0 P10 P20 P30 P40 P50 P60 P70 P80 P90 P100 C10 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
     test -f "bench/$framework-eq-$type.log" ||\
-    sbt "dotty-bench-bootstrapped/jmh:run 10 15 $(echo "val x = $framework.Eq.derived[$type]" | o) -classpath /home/olivier/out2 -Xmax-inlines 1000" | tee "bench/$framework-eq-$type.log"
+    sbt "dotty-bench-bootstrapped/jmh:run 10 15 $(echo "val x = $framework.Eq.derived[$type]" | o) -classpath $HOME/out2 -Xmax-inlines 1000" | tee "bench/$framework-eq-$type.log"
   done
 done
 
 for framework in Shapeless3 Staged; do
-  for type in PK0 CK10 PK10 CK20 PK20 CK30 PK30 CK40 PK40 CK50 PK50 CK60 PK60 CK70 PK70 CK80 PK80 CK90 PK90 CK100 PK100; do
+  for type in PK0 PK10 PK20 PK30 PK40 PK50 PK60 PK70 PK80 PK90 PK100  CK10 CK20 CK30 CK40 CK50 CK60 CK70 CK80 CK90 CK100; do
     test -f "bench/$framework-functor-$type.log" ||\
-    sbt "dotty-bench-bootstrapped/jmh:run 10 15 $(echo "val x = $framework.Functor.derived[$type]" | o) -classpath /home/olivier/out2 -Xmax-inlines 1000" | tee "bench/$framework-functor-$type.log"
+    sbt "dotty-bench-bootstrapped/jmh:run 10 15 $(echo "val x = $framework.Functor.derived[$type]" | o) -classpath $HOME/out2 -Xmax-inlines 1000" | tee "bench/$framework-functor-$type.log"
   done
 done
 
@@ -32,14 +32,14 @@ mkdir -p "bench/outs"
 for framework in Inlined Shapeless3 Staged; do
   for type in P0 P10 P20 P30 P40 P50 P60 P70 P80 P90 P100 C10 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
     mkdir -p "bench/outs/$framework-$type"
-    cmd="$cmd ; run $(echo "val x = $framework.Eq.derived[$type]" | o) -classpath /home/olivier/out2 -Xmax-inlines 1000 -d bench/outs/$framework-$type"
+    cmd="$cmd ; run $(echo "val x = $framework.Eq.derived[$type]" | o) -classpath $HOME/out2 -Xmax-inlines 1000 -d bench/outs/$framework-$type"
   done
 done
 
 for framework in Shapeless3 Staged; do
   for type in PK0 PK10 PK20 PK30 PK40 PK50 PK60 PK70 PK80 PK90 PK100 CK10 CK20 CK30 CK40 CK50 CK60 CK70 CK80 CK90 CK100; do
     mkdir -p "bench/outs/$framework-$type"
-    cmd="$cmd ; run $(echo "val x = $framework.Functor.derived[$type]" | o) -classpath /home/olivier/out2 -Xmax-inlines 1000 -d bench/outs/$framework-$type"
+    cmd="$cmd ; run $(echo "val x = $framework.Functor.derived[$type]" | o) -classpath $HOME/out2 -Xmax-inlines 1000 -d bench/outs/$framework-$type"
   done
 done
 
