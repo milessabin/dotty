@@ -1,4 +1,6 @@
-# set -eux
+#!/bin/bash
+
+shopt -s xpg_echo
 
 o() {
   mkdir -p /tmp/o
@@ -7,19 +9,22 @@ o() {
   echo "$t"
 }
 
-mkdir "$HOME/out2" >/dev/null 2>&1 && sbt "run -d $HOME/out2 $HOME/workspace/dotty/tests/run-custom-args/typeclass-derivation-macro/1.scala"
+OUT2=bench/out2
+SRC=tests/run-custom-args/typeclass-derivation-macro/1.scala
+
+mkdir $OUT2 >/dev/null 2>&1 && sbt "run -d $OUT2 $SRC"
 
 for framework in Inlined Shapeless3 Staged; do
   for type in P0 P10 P20 P30 P40 P50 P60 P70 P80 P90 P100 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
     test -f "bench/$framework-eq-$type.log" ||\
-    sbt "dotty-bench-bootstrapped/jmh:run 10 15 $(echo "val x = $framework.Eq.derived[$type]" | o) -classpath $HOME/out2 -Xmax-inlines 1000" | tee "bench/$framework-eq-$type.log"
+    sbt "dotty-bench-bootstrapped/jmh:run 10 15 $(echo "val x = $framework.Eq.derived[$type]" | o) -classpath $OUT2 -Xmax-inlines 1000" | tee "bench/$framework-eq-$type.log"
   done
 done
 
 for framework in Shapeless3 Staged; do
   for type in PK0 PK10 PK20 PK30 PK40 PK50 PK60 PK70 PK80 PK90 PK100  CK10 CK20 CK30 CK40 CK50 CK60 CK70 CK80 CK90 CK100; do
     test -f "bench/$framework-functor-$type.log" ||\
-    sbt "dotty-bench-bootstrapped/jmh:run 10 15 $(echo "val x = $framework.Functor.derived[$type]" | o) -classpath $HOME/out2 -Xmax-inlines 1000" | tee "bench/$framework-functor-$type.log"
+    sbt "dotty-bench-bootstrapped/jmh:run 10 15 $(echo "val x = $framework.Functor.derived[$type]" | o) -classpath $OUT2 -Xmax-inlines 1000" | tee "bench/$framework-functor-$type.log"
   done
 done
 
@@ -32,14 +37,14 @@ mkdir -p "bench/outs"
 for framework in Inlined Shapeless3 Staged; do
   for type in P0 P10 P20 P30 P40 P50 P60 P70 P80 P90 P100 C20 C30 C40 C50 C60 C70 C80 C90 C100; do
     mkdir -p "bench/outs/$framework-$type"
-    cmd="$cmd ; run $(echo "val x = $framework.Eq.derived[$type]" | o) -classpath $HOME/out2 -Xmax-inlines 1000 -d bench/outs/$framework-$type"
+    cmd="$cmd ; run $(echo "val x = $framework.Eq.derived[$type]" | o) -classpath $OUT2 -Xmax-inlines 1000 -d bench/outs/$framework-$type"
   done
 done
 
 for framework in Shapeless3 Staged; do
   for type in PK0 PK10 PK20 PK30 PK40 PK50 PK60 PK70 PK80 PK90 PK100 CK10 CK20 CK30 CK40 CK50 CK60 CK70 CK80 CK90 CK100; do
     mkdir -p "bench/outs/$framework-$type"
-    cmd="$cmd ; run $(echo "val x = $framework.Functor.derived[$type]" | o) -classpath $HOME/out2 -Xmax-inlines 1000 -d bench/outs/$framework-$type"
+    cmd="$cmd ; run $(echo "val x = $framework.Functor.derived[$type]" | o) -classpath $OUT2 -Xmax-inlines 1000 -d bench/outs/$framework-$type"
   done
 done
 
@@ -106,41 +111,41 @@ done
 echo; echo "Runtime P\tassertP\tInlinedEqDerivedP\tShapeless3EqDerivedP\tStagedEqDerivedP"
 paste \
   $(seq 0 10 100 | o) \
-  $(cat "bench/runtime.log" | grep -e 'assertP.*thrpt'                    | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'assertP.*thrpt'                    | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o) \
-  $(cat "bench/runtime.log" | grep -e 'InlinedEqDerivedP.*thrpt'          | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'InlinedEqDerivedP.*thrpt'          | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o) \
-  $(cat "bench/runtime.log" | grep -e 'Shapeless3EqDerivedP.*thrpt'       | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'Shapeless3EqDerivedP.*thrpt'       | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o) \
-  $(cat "bench/runtime.log" | grep -e 'StagedEqDerivedP.*thrpt'           | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'StagedEqDerivedP.*thrpt'           | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o)
 
 echo; echo "Runtime C\tassertC\tInlinedEqDerivedC\tShapeless3EqDerivedC\tStagedEqDerivedC"
 paste \
   $(seq 10 10 100 | o) \
-  $(cat "bench/runtime.log" | grep -e 'assertC.*thrpt'                    | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'assertC.*thrpt'                    | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o) \
-  $(cat "bench/runtime.log" | grep -e 'InlinedEqDerivedC.*thrpt'          | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'InlinedEqDerivedC.*thrpt'          | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o) \
-  $(cat "bench/runtime.log" | grep -e 'Shapeless3EqDerivedC.*thrpt'       | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'Shapeless3EqDerivedC.*thrpt'       | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o) \
-  $(cat "bench/runtime.log" | grep -e 'StagedEqDerivedC.*thrpt'           | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'StagedEqDerivedC.*thrpt'           | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o)
 
 echo; echo "Runtime PK\tshapeless3FunctorDerivedPK\tstagedFunctorDerivedPK"
 paste \
   $(seq 0 10 100 | o) \
-  $(cat "bench/runtime.log" | grep -e 'shapeless3FunctorDerivedPK.*thrpt' | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'shapeless3FunctorDerivedPK.*thrpt' | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o) \
-  $(cat "bench/runtime.log" | grep -e 'stagedFunctorDerivedPK.*thrpt'     | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'stagedFunctorDerivedPK.*thrpt'     | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o)
 
 echo; echo "Runtime CK\tshapeless3FunctorDerivedCK\tstagedFunctorDerivedCK"
 paste \
   $(seq 10 10 100 | o) \
-  $(cat "bench/runtime.log" | grep -e 'shapeless3FunctorDerivedCK.*thrpt' | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'shapeless3FunctorDerivedCK.*thrpt' | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o) \
-  $(cat "bench/runtime.log" | grep -e 'stagedFunctorDerivedCK.*thrpt'     | cut -c 19-88 | cut -c-54 --complement |\
+  $(cat "bench/runtime.log" | grep -e 'stagedFunctorDerivedCK.*thrpt'     | tr -s ' ' | cut -d ' ' -f 5 |\
                                                          sed 's-^-scale=3; -' | sed 's-$-/1000000.0-' | bc -l | o)
 
 echo; echo "Bytecode P\tInlined\tShapeless3\tStaged"
