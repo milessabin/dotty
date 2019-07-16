@@ -9,8 +9,8 @@ o() {
   echo "$t"
 }
 
-OUT2=bench/out2
-SRC=tests/run-custom-args/typeclass-derivation-macro/1.scala
+OUT2=`pwd`/bench/out2
+SRC=`pwd`/tests/run-custom-args/typeclass-derivation-macro/1.scala
 
 mkdir $OUT2 >/dev/null 2>&1 && sbt "run -d $OUT2 $SRC"
 
